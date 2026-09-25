@@ -170,12 +170,6 @@
     <Setter Property="Padding" Value="10,0" />
     <Setter Property="VerticalContentAlignment" Value="Center" />
   </Style>
-  <Style x:Key="CompactComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
-    <Setter Property="Height" Value="32" />
-    <Setter Property="MinHeight" Value="32" />
-    <Setter Property="Padding" Value="10,0,30,0" />
-    <Setter Property="VerticalContentAlignment" Value="Center" />
-  </Style>
   <Style TargetType="CheckBox">
     <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
     <Setter Property="VerticalContentAlignment" Value="Center" /><Setter Property="MinHeight" Value="28" />
@@ -248,6 +242,12 @@
         <Trigger Property="HasItems" Value="False"><Setter TargetName="DropDown" Property="MinHeight" Value="36" /></Trigger>
       </ControlTemplate.Triggers>
     </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="CompactComboBox" TargetType="ComboBox" BasedOn="{StaticResource {x:Type ComboBox}}">
+    <Setter Property="Height" Value="32" />
+    <Setter Property="MinHeight" Value="32" />
+    <Setter Property="Padding" Value="10,0,30,0" />
+    <Setter Property="VerticalContentAlignment" Value="Center" />
   </Style>
   <Style TargetType="ComboBoxItem">
     <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" /><Setter Property="Padding" Value="10,8" />
