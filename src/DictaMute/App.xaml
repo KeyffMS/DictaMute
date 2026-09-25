@@ -11,7 +11,7 @@
       <Setter Property="FontFamily" Value="Segoe UI" />
       <Setter Property="FontSize" Value="14" />
     </Style>
-    <Style TargetType="TextBlock"><Setter Property="Foreground" Value="#E5EDF8" /></Style>
+    <!-- Text inherits its container's foreground, including light combo-box popups. -->
     <Style x:Key="Hint" TargetType="TextBlock">
       <Setter Property="Foreground" Value="#A9BAD2" />
       <Setter Property="TextWrapping" Value="Wrap" />

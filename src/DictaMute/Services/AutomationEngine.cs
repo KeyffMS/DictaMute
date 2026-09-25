@@ -79,6 +79,14 @@ internal sealed class AutomationEngine
                 var capture = audio.ReadCapture();
                 var sources = capture.Where(c => c.Active &&
                     (profile.AnyMicrophoneApp || RuleResolver.IsSource(profile, c.App))).ToArray();
+                var dynamicSources = profile.AnyMicrophoneApp ? sources.Select(c => c.App).ToArray() : [];
+                if (dynamicSources.Length > 0)
+                {
+                    // An existing target can begin recording while the gate is already
+                    // open. Its new source role takes precedence immediately.
+                    await media.RestoreAsync(dynamicSources).ConfigureAwait(false);
+                    foreach (var app in dynamicSources) pauseDecisions.Remove(app.ExecutablePath ?? app.Name);
+                }
                 var peak = sources.Length == 0 ? 0 : sources.Max(c => c.Peak);
                 var open = gate.Update(configuration.Enabled, sources.Length > 0, peak, profile.Threshold,
                     TimeSpan.FromMilliseconds(profile.HoldMilliseconds), clock.Elapsed);
@@ -89,7 +97,7 @@ internal sealed class AutomationEngine
                     foreach (var session in audio.Playback.ToArray())
                     {
                         if (leases.ContainsKey(session.Key)) continue;
-                        var dynamicSource = profile.AnyMicrophoneApp && capture.Any(c => c.Active && c.App.Matches(session.App));
+                        var dynamicSource = dynamicSources.Any(a => a.Matches(session.App));
                         var rule = RuleResolver.TargetFor(profile, session.App,
                             session.ProcessId == Environment.ProcessId || dynamicSource);
                         if (rule is null) continue;
@@ -121,7 +129,13 @@ internal sealed class AutomationEngine
                             leases.Remove(pair.Key);
                             continue;
                         }
-                        if (open) pair.Value.Volume.Apply(profile.DuckLevel, step, fade);
+                        var becameSource = dynamicSources.Any(a => a.Matches(pair.Value.Session.App));
+                        if (becameSource)
+                        {
+                            pair.Value.Volume.Restore(TimeSpan.Zero, TimeSpan.Zero, immediate: true);
+                            leases.Remove(pair.Key);
+                        }
+                        else if (open) pair.Value.Volume.Apply(profile.DuckLevel, step, fade);
                         else if (pair.Value.Volume.Restore(step, fade)) leases.Remove(pair.Key);
                     }
                     catch (Exception ex)
@@ -151,7 +165,8 @@ internal sealed class AutomationEngine
         finally
         {
             await RestoreAllAsync().ConfigureAwait(false);
-            audio?.Dispose();
+            try { audio?.Dispose(); }
+            catch (Exception ex) { Log.Write("Zwalnianie zasobów audio przy wyjściu.", ex); }
         }
     }
 }

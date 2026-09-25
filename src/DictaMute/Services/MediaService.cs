@@ -12,11 +12,13 @@ internal sealed class MediaService
     private sealed class OwnedPause
     {
         public GlobalSystemMediaTransportControlsSession Session { get; }
+        public AppIdentity App { get; }
         private int _superseded;
         public bool Superseded => Volatile.Read(ref _superseded) != 0;
-        public OwnedPause(GlobalSystemMediaTransportControlsSession session)
+        public OwnedPause(GlobalSystemMediaTransportControlsSession session, AppIdentity app)
         {
             Session = session;
+            App = app;
             session.MediaPropertiesChanged += MediaChanged;
             session.PlaybackInfoChanged += PlaybackChanged;
         }
@@ -90,7 +92,7 @@ internal sealed class MediaService
                 Warning = $"Odtwarzacz {rule.App.Name} nie przyjął pauzy. Użyto Duck.";
                 return false;
             }
-            _paused.Add(new(session));
+            _paused.Add(new(session, rule.App));
             return true;
         }
         catch (Exception ex)
@@ -101,9 +103,9 @@ internal sealed class MediaService
         }
     }
 
-    public async Task RestoreAsync()
+    public async Task RestoreAsync(AppIdentity[]? onlyApps = null)
     {
-        foreach (var owned in _paused.ToArray())
+        foreach (var owned in _paused.Where(p => onlyApps is null || onlyApps.Any(a => a.Matches(p.App))).ToArray())
         {
             try
             {
@@ -119,7 +121,7 @@ internal sealed class MediaService
                 }
             }
             catch (Exception ex) { Log.Write("Przywracanie odtwarzania.", ex); }
+            finally { _paused.Remove(owned); }
         }
-        _paused.Clear();
     }
 }
