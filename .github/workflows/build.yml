@@ -25,6 +25,15 @@ jobs:
         run: dotnet build DictaMute.sln --configuration Release --no-restore
       - name: Run deterministic core tests
         run: dotnet run --project tests/DictaMute.Tests --configuration Release --no-build
+      - name: Check WPF theme, controls and layout
+        run: dotnet run --project tests/DictaMute.UiTests --configuration Release -- .
+      - name: Upload UI previews
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: DictaMute-ui-preview
+          path: artifacts/ui-preview/
+          if-no-files-found: warn
       - name: Publish portable Windows x64 application
         run: dotnet publish src/DictaMute/DictaMute.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=false --output artifacts/DictaMute-win-x64
       - uses: actions/upload-artifact@v4
