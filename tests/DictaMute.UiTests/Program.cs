@@ -93,7 +93,7 @@ internal static class Program
             Check((CornerRadius)app.FindResource("CardRadius") == new CornerRadius(12), "Card radius is 12");
             Check((CornerRadius)app.FindResource("ButtonRadius") == new CornerRadius(9), "Button radius is 9");
             Check(Find<DataGrid>(window, "SourcesGrid").RowHeight == 42, "Rows match SightAdapt height");
-            Check(Find<DataGrid>(window, "TargetsGrid").ColumnHeaderHeight == 44, "Column headers match SightAdapt height");
+            Check(Find<DataGrid>(window, "TargetsGrid").ColumnHeaderHeight == 28, "Main table headers use compact height");
             Check(Find<StackPanel>(window, "SourcesEmptyState").IsVisible, "Source empty state is visible");
             Check(Find<StackPanel>(window, "TargetsEmptyState").IsVisible, "Target empty state is visible");
             Find<TextBlock>(window, "NoticeText").Text = "Podgląd interfejsu — dane demonstracyjne, bez aktywnego silnika audio.";
