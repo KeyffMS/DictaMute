@@ -35,8 +35,8 @@
       <Grid Grid.Row="0" Height="34" Margin="0,0,0,6">
         <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="180" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
         <TextBlock Text="Profil" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0" />
-        <ComboBox x:Name="ProfileBox" Grid.Column="1" DisplayMemberPath="Name" MinHeight="32" Height="32" Padding="9,3,30,3" SelectionChanged="ProfileBox_SelectionChanged" AutomationProperties.Name="Aktywny profil" />
-        <TextBox x:Name="ProfileName" Grid.Column="2" Margin="8,0" MinHeight="32" Height="32" Padding="9,4" ToolTip="Nazwa bieżącego profilu" AutomationProperties.Name="Nazwa bieżącego profilu" />
+        <ComboBox x:Name="ProfileBox" Grid.Column="1" Style="{StaticResource CompactComboBox}" DisplayMemberPath="Name" SelectionChanged="ProfileBox_SelectionChanged" AutomationProperties.Name="Aktywny profil" />
+        <TextBox x:Name="ProfileName" Grid.Column="2" Style="{StaticResource CompactTextBox}" Margin="8,0" ToolTip="Nazwa bieżącego profilu" AutomationProperties.Name="Nazwa bieżącego profilu" />
         <StackPanel Grid.Column="3" Orientation="Horizontal">
           <Button Content="Nowy profil" Click="NewProfile_Click" MinHeight="32" Height="32" Padding="14,4" />
           <Button Content="Usuń profil" Style="{StaticResource DangerButton}" Click="DeleteProfile_Click" MinHeight="32" Height="32" Padding="14,4" Margin="0" />
