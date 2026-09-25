@@ -113,6 +113,11 @@ internal static class Program
             var global = Find<ComboBox>(window, "GlobalModeBox");
             global.ItemsSource = Enum.GetValues<Reaction>();
             global.SelectedIndex = 0;
+            Check(global.Height == 32, "Global mode selector uses compact height");
+            Check(
+                Find<CheckBox>(window, "AllExceptSources").TranslatePoint(new Point(0, 0), window).Y ==
+                Find<CheckBox>(window, "AnyMicrophone").TranslatePoint(new Point(0, 0), window).Y,
+                "Global options share one row");
             var captureApps = Find<ComboBox>(window, "CaptureApps");
             var playbackApps = Find<ComboBox>(window, "PlaybackApps");
             Check(
