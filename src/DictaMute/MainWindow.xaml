@@ -32,14 +32,14 @@
         <RowDefinition Height="Auto" /><RowDefinition Height="*" />
         <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
-      <Grid Grid.Row="0" Height="40" Margin="0,0,0,8">
+      <Grid Grid.Row="0" Height="34" Margin="0,0,0,6">
         <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="180" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
         <TextBlock Text="Profil" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0" />
-        <ComboBox x:Name="ProfileBox" Grid.Column="1" DisplayMemberPath="Name" SelectionChanged="ProfileBox_SelectionChanged" AutomationProperties.Name="Aktywny profil" />
-        <TextBox x:Name="ProfileName" Grid.Column="2" Margin="8,0" ToolTip="Nazwa bieżącego profilu" AutomationProperties.Name="Nazwa bieżącego profilu" />
+        <ComboBox x:Name="ProfileBox" Grid.Column="1" DisplayMemberPath="Name" MinHeight="32" Height="32" Padding="9,3,30,3" SelectionChanged="ProfileBox_SelectionChanged" AutomationProperties.Name="Aktywny profil" />
+        <TextBox x:Name="ProfileName" Grid.Column="2" Margin="8,0" MinHeight="32" Height="32" Padding="9,4" ToolTip="Nazwa bieżącego profilu" AutomationProperties.Name="Nazwa bieżącego profilu" />
         <StackPanel Grid.Column="3" Orientation="Horizontal">
-          <Button Content="Nowy profil" Click="NewProfile_Click" />
-          <Button Content="Usuń profil" Style="{StaticResource DangerButton}" Click="DeleteProfile_Click" Margin="0" />
+          <Button Content="Nowy profil" Click="NewProfile_Click" MinHeight="32" Height="32" Padding="14,4" />
+          <Button Content="Usuń profil" Style="{StaticResource DangerButton}" Click="DeleteProfile_Click" MinHeight="32" Height="32" Padding="14,4" Margin="0" />
         </StackPanel>
       </Grid>
       <ScrollViewer x:Name="MainScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
@@ -55,7 +55,8 @@
                   </Grid>
                 </Border>
                 <Grid>
-                  <DataGrid x:Name="SourcesGrid" Height="160" MinHeight="120" MaxHeight="180" IsReadOnly="True" AutomationProperties.Name="Skonfigurowane źródła mikrofonu">
+                  <DataGrid x:Name="SourcesGrid" Height="144" MinHeight="112" MaxHeight="164" ColumnHeaderHeight="28" IsReadOnly="True" AutomationProperties.Name="Skonfigurowane źródła mikrofonu">
+                    <DataGrid.ColumnHeaderStyle><Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"><Setter Property="FontSize" Value="11.333" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Padding" Value="8,0" /></Style></DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
                       <DataGridTemplateColumn Width="36"><DataGridTemplateColumn.CellTemplate><DataTemplate><Image Source="{Binding Icon}" Width="20" Height="20" /></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
                       <DataGridTextColumn Header="Aplikacja" Binding="{Binding Name}" Width="*" />
@@ -68,15 +69,15 @@
                     <TextBlock Text="Uruchom rozmowę lub dyktowanie, a następnie wybierz aplikację poniżej." Style="{StaticResource Hint}" TextAlignment="Center" />
                   </StackPanel>
                 </Grid>
-                <StackPanel Margin="16,6,16,6">
-                  <TextBlock Text="Aktywne aplikacje używające mikrofonu" Style="{StaticResource Hint}" />
-                  <ComboBox x:Name="CaptureApps" DisplayMemberPath="Label" AutomationProperties.Name="Dostępne źródła mikrofonu" ToolTip="Uruchom rozmowę lub dyktowanie, aby zobaczyć proces używający mikrofonu." />
-                  <WrapPanel Margin="0,8,0,0">
-                    <Button Content="Dodaj źródło" Click="AddCapture_Click" IsEnabled="{Binding ElementName=CaptureApps, Path=HasItems}" />
-                    <Button Content="Wybierz .exe" Click="BrowseSource_Click" />
-                    <Button Content="Usuń" Click="RemoveSource_Click" Style="{StaticResource DangerButton}" Margin="0" />
+                <StackPanel Margin="14,3,14,4">
+                  <TextBlock Text="Aktywne aplikacje używające mikrofonu" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11.333" Margin="0,0,0,4" />
+                  <ComboBox x:Name="CaptureApps" DisplayMemberPath="Label" MinHeight="32" Height="32" Padding="9,3,30,3" AutomationProperties.Name="Dostępne źródła mikrofonu" ToolTip="Uruchom rozmowę lub dyktowanie, aby zobaczyć proces używający mikrofonu." />
+                  <WrapPanel Margin="0,6,0,0">
+                    <Button Content="Dodaj źródło" MinHeight="34" Padding="14,5" Click="AddCapture_Click" IsEnabled="{Binding ElementName=CaptureApps, Path=HasItems}" />
+                    <Button Content="Wybierz .exe" Click="BrowseSource_Click" MinHeight="34" Padding="14,5" />
+                    <Button Content="Usuń" Click="RemoveSource_Click" Style="{StaticResource DangerButton}" MinHeight="34" Padding="14,5" Margin="0" />
                   </WrapPanel>
-                  <TextBlock Text="Skrót dodaje proces aktywnego okna. Dla Win+H wybierz rzeczywisty proces mikrofonu z listy." Style="{StaticResource Hint}" Margin="0,6,0,0" />
+                  <TextBlock Text="Skrót dodaje proces aktywnego okna. Dla Win+H wybierz rzeczywisty proces mikrofonu z listy." Foreground="{StaticResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0" />
                 </StackPanel>
               </StackPanel>
             </Border>
@@ -89,7 +90,8 @@
                   </Grid>
                 </Border>
                 <Grid>
-                  <DataGrid x:Name="TargetsGrid" Height="160" MinHeight="120" MaxHeight="180" AutomationProperties.Name="Aplikacje docelowe i tryby reakcji">
+                  <DataGrid x:Name="TargetsGrid" Height="144" MinHeight="112" MaxHeight="164" ColumnHeaderHeight="28" AutomationProperties.Name="Aplikacje docelowe i tryby reakcji">
+                    <DataGrid.ColumnHeaderStyle><Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}"><Setter Property="FontSize" Value="11.333" /><Setter Property="FontWeight" Value="SemiBold" /><Setter Property="Padding" Value="8,0" /></Style></DataGrid.ColumnHeaderStyle>
                     <DataGrid.Columns>
                       <DataGridTemplateColumn Width="36" IsReadOnly="True"><DataGridTemplateColumn.CellTemplate><DataTemplate><Image Source="{Binding Icon}" Width="20" Height="20" /></DataTemplate></DataGridTemplateColumn.CellTemplate></DataGridTemplateColumn>
                       <DataGridTextColumn Header="Aplikacja" Binding="{Binding Name}" Width="*" IsReadOnly="True" />
@@ -103,15 +105,15 @@
                     <TextBlock Text="Dodaj odtwarzacz i wybierz: Duck, Mute lub Pause." Style="{StaticResource Hint}" TextAlignment="Center" />
                   </StackPanel>
                 </Grid>
-                <StackPanel Margin="16,8,16,8">
-                  <TextBlock Text="Aplikacje z sesją odtwarzania" Style="{StaticResource Hint}" />
-                  <ComboBox x:Name="PlaybackApps" DisplayMemberPath="Label" AutomationProperties.Name="Dostępne aplikacje odtwarzające dźwięk" />
-                  <WrapPanel Margin="0,10,0,0">
-                    <Button Content="Dodaj cel" Click="AddPlayback_Click" IsEnabled="{Binding ElementName=PlaybackApps, Path=HasItems}" />
-                    <Button Content="Wybierz .exe" Click="BrowseTarget_Click" />
-                    <Button Content="Usuń" Click="RemoveTarget_Click" Style="{StaticResource DangerButton}" Margin="0" />
+                <StackPanel Margin="14,3,14,4">
+                  <TextBlock Text="Aplikacje z sesją odtwarzania" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11.333" Margin="0,0,0,4" />
+                  <ComboBox x:Name="PlaybackApps" DisplayMemberPath="Label" MinHeight="32" Height="32" Padding="9,3,30,3" AutomationProperties.Name="Dostępne aplikacje odtwarzające dźwięk" />
+                  <WrapPanel Margin="0,6,0,0">
+                    <Button Content="Dodaj cel" MinHeight="34" Padding="14,5" Click="AddPlayback_Click" IsEnabled="{Binding ElementName=PlaybackApps, Path=HasItems}" />
+                    <Button Content="Wybierz .exe" Click="BrowseTarget_Click" MinHeight="34" Padding="14,5" />
+                    <Button Content="Usuń" Click="RemoveTarget_Click" Style="{StaticResource DangerButton}" MinHeight="34" Padding="14,5" Margin="0" />
                   </WrapPanel>
-                  <TextBlock Text="Duck — ściszenie; Mute — wyciszenie; Pause — pauza. Źródła X nigdy nie są celami. ID sesji jest opcjonalne." Style="{StaticResource Hint}" />
+                  <TextBlock Text="Duck — ściszenie; Mute — wyciszenie; Pause — pauza. Źródła X nigdy nie są celami. ID sesji jest opcjonalne." Foreground="{StaticResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0" />
                 </StackPanel>
               </StackPanel>
             </Border>
