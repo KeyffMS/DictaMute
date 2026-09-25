@@ -89,7 +89,8 @@ internal sealed class SuiteTrayTheme : Forms.ToolStripProfessionalRenderer, IDis
         using var pen = new Pen(_accent, 2);
         var rect = e.ImageRectangle;
         e.Graphics.SmoothingMode = SmoothingMode.AntiAlias;
-        e.Graphics.DrawLines(pen, [new Point(rect.Left + 2, rect.Top + rect.Height / 2), new Point(rect.Left + 6, rect.Bottom - 3), new Point(rect.Right - 1, rect.Top + 3)]);
+        Point[] points = [new Point(rect.Left + 2, rect.Top + rect.Height / 2), new Point(rect.Left + 6, rect.Bottom - 3), new Point(rect.Right - 1, rect.Top + 3)];
+        e.Graphics.DrawLines(pen, points);
     }
 
     protected override void OnRenderSeparator(Forms.ToolStripSeparatorRenderEventArgs e)
