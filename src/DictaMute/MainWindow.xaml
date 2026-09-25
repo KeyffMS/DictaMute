@@ -5,55 +5,54 @@
         WindowStartupLocation="CenterScreen" Loaded="Presentation_Loaded"
         SourceInitialized="Presentation_SourceInitialized" Closed="Presentation_Closed">
   <Grid>
-    <Grid.RowDefinitions><RowDefinition Height="104" /><RowDefinition Height="*" /></Grid.RowDefinitions>
-    <!-- Same header anatomy as SightAdapt.ConfigurationForm; product-specific content. -->
+    <Grid.RowDefinitions><RowDefinition Height="82" /><RowDefinition Height="*" /></Grid.RowDefinitions>
     <Border x:Name="SuiteHeader" Background="{StaticResource HeaderBackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="5,0,0,0">
-      <StackPanel Margin="26,18,24,14" VerticalAlignment="Center">
-        <TextBlock Text="Aplikacje i profile dźwięku" FontSize="26.667" FontWeight="Bold" />
-        <TextBlock Text="Wybierz źródła mikrofonu i aplikacje, które mają ściszać się lub zatrzymywać, gdy mówisz."
-                   Foreground="{StaticResource TextSecondaryBrush}" Margin="0,7,0,0" TextWrapping="Wrap" />
-      </StackPanel>
-    </Border>
-    <Grid Grid.Row="1" Margin="24,16,24,12">
-      <Grid.RowDefinitions>
-        <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" />
-        <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
-      </Grid.RowDefinitions>
-      <Border Style="{StaticResource Card}" Padding="18,12" Margin="0,0,0,12" MinHeight="68">
-        <Grid>
-          <Grid.ColumnDefinitions><ColumnDefinition Width="64" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-          <CheckBox x:Name="AutomationEnabled" Style="{StaticResource SuiteSwitch}" HorizontalAlignment="Left" VerticalAlignment="Center"
+      <Grid Margin="26,10,24,10">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+        <StackPanel VerticalAlignment="Center">
+          <TextBlock Text="DictaMute" FontSize="24" FontWeight="Bold" />
+          <TextBlock Text="Automatycznie ścisza, wycisza lub pauzuje dźwięk, gdy używasz mikrofonu."
+                     Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,3,0,0" TextWrapping="Wrap" />
+        </StackPanel>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Text="Tryb automatyczny" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0" />
+          <CheckBox x:Name="AutomationEnabled" Style="{StaticResource SuiteSwitch}" VerticalAlignment="Center" Margin="0,0,12,0"
                     AutomationProperties.Name="Włącz automatykę dźwięku" ToolTip="Włącz lub wyłącz automatykę" Click="ToggleAutomation_Click" />
-          <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,16,0">
-            <TextBlock Text="Tryb automatyczny" Style="{StaticResource Heading}" />
-            <TextBlock Text="Reaguj na aktywność mikrofonu zgodnie z wybranym profilem." Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,4,0,0" TextWrapping="Wrap" />
-          </StackPanel>
-          <Border x:Name="AutomationStateBadge" Grid.Column="2" VerticalAlignment="Center" Padding="10,4" CornerRadius="7">
+          <Border x:Name="AutomationStateBadge" VerticalAlignment="Center" Padding="9,3" CornerRadius="7">
             <Border.Style><Style TargetType="Border"><Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" /><Style.Triggers><DataTrigger Binding="{Binding ElementName=AutomationEnabled, Path=IsChecked}" Value="True"><Setter Property="Background" Value="{StaticResource SuccessSoftBrush}" /></DataTrigger></Style.Triggers></Style></Border.Style>
             <TextBlock x:Name="AutomationStateText" FontSize="10.667" FontWeight="SemiBold" AutomationProperties.LiveSetting="Polite">
               <TextBlock.Style><Style TargetType="TextBlock"><Setter Property="Text" Value="WYŁĄCZONA" /><Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" /><Style.Triggers><DataTrigger Binding="{Binding ElementName=AutomationEnabled, Path=IsChecked}" Value="True"><Setter Property="Text" Value="GOTOWA" /><Setter Property="Foreground" Value="{StaticResource SuccessBrush}" /></DataTrigger></Style.Triggers></Style></TextBlock.Style>
             </TextBlock>
           </Border>
-        </Grid>
-      </Border>
-      <Grid Grid.Row="1" Margin="0,0,0,12">
-        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="200" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-        <TextBlock Text="Profil" Style="{StaticResource Heading}" Margin="0,0,12,0" />
+        </StackPanel>
+      </Grid>
+    </Border>
+    <Grid Grid.Row="1" Margin="24,10,24,10">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" /><RowDefinition Height="*" />
+        <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+      <Grid Grid.Row="0" Height="40" Margin="0,0,0,8">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="180" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+        <TextBlock Text="Profil" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0" />
         <ComboBox x:Name="ProfileBox" Grid.Column="1" DisplayMemberPath="Name" SelectionChanged="ProfileBox_SelectionChanged" AutomationProperties.Name="Aktywny profil" />
-        <TextBox x:Name="ProfileName" Grid.Column="2" Margin="12,0" ToolTip="Nazwa bieżącego profilu" AutomationProperties.Name="Nazwa bieżącego profilu" />
+        <TextBox x:Name="ProfileName" Grid.Column="2" Margin="8,0" ToolTip="Nazwa bieżącego profilu" AutomationProperties.Name="Nazwa bieżącego profilu" />
         <StackPanel Grid.Column="3" Orientation="Horizontal">
           <Button Content="Nowy profil" Click="NewProfile_Click" />
           <Button Content="Usuń profil" Style="{StaticResource DangerButton}" Click="DeleteProfile_Click" Margin="0" />
         </StackPanel>
       </Grid>
-      <ScrollViewer x:Name="MainScroll" Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
+      <ScrollViewer x:Name="MainScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="0,0,10,0">
         <StackPanel Margin="0">
           <Grid>
             <Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="16" /><ColumnDefinition /></Grid.ColumnDefinitions>
             <Border Style="{StaticResource Card}" Padding="1">
               <StackPanel>
-                <Border Background="{StaticResource SurfaceRaisedBrush}" CornerRadius="11,11,0,0" Padding="16,0" Height="46">
-                  <DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding ElementName=SourcesGrid, Path=Items.Count, StringFormat=LICZBA: {0}}" Style="{StaticResource CountLabel}" /><TextBlock Text="X — Źródła mikrofonu" FontWeight="SemiBold" FontSize="15.333" /></DockPanel>
+                <Border Background="{StaticResource SurfaceRaisedBrush}" CornerRadius="11,11,0,0" Padding="14,5" Height="42">
+                  <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><TextBlock Text="X — Źródła mikrofonu" FontWeight="SemiBold" FontSize="14.667" /><TextBlock Text="  · aplikacje, których mikrofon uruchamia regułę" Foreground="{StaticResource TextMutedBrush}" FontSize="11.333" VerticalAlignment="Center" /></StackPanel>
+                    <TextBlock Grid.Column="1" Text="{Binding ElementName=SourcesGrid, Path=Items.Count, StringFormat=LICZBA: {0}}" Style="{StaticResource CountLabel}" VerticalAlignment="Center" />
+                  </Grid>
                 </Border>
                 <Grid>
                   <DataGrid x:Name="SourcesGrid" Height="160" MinHeight="120" MaxHeight="180" IsReadOnly="True" AutomationProperties.Name="Skonfigurowane źródła mikrofonu">
@@ -83,8 +82,11 @@
             </Border>
             <Border Grid.Column="2" Style="{StaticResource Card}" Padding="1">
               <StackPanel>
-                <Border Background="{StaticResource SurfaceRaisedBrush}" CornerRadius="11,11,0,0" Padding="18,0" Height="52">
-                  <DockPanel><TextBlock DockPanel.Dock="Right" Text="{Binding ElementName=TargetsGrid, Path=Items.Count, StringFormat=LICZBA: {0}}" Style="{StaticResource CountLabel}" /><TextBlock Text="Y — Aplikacje docelowe" FontWeight="SemiBold" FontSize="15.333" /></DockPanel>
+                <Border Background="{StaticResource SurfaceRaisedBrush}" CornerRadius="11,11,0,0" Padding="14,5" Height="42">
+                  <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center"><TextBlock Text="Y — Aplikacje docelowe" FontWeight="SemiBold" FontSize="14.667" /><TextBlock Text="  · aplikacje ściszane, wyciszane lub pauzowane" Foreground="{StaticResource TextMutedBrush}" FontSize="11.333" VerticalAlignment="Center" /></StackPanel>
+                    <TextBlock Grid.Column="1" Text="{Binding ElementName=TargetsGrid, Path=Items.Count, StringFormat=LICZBA: {0}}" Style="{StaticResource CountLabel}" VerticalAlignment="Center" />
+                  </Grid>
                 </Border>
                 <Grid>
                   <DataGrid x:Name="TargetsGrid" Height="160" MinHeight="120" MaxHeight="180" AutomationProperties.Name="Aplikacje docelowe i tryby reakcji">
@@ -149,13 +151,13 @@
           </Expander>
         </StackPanel>
       </ScrollViewer>
-      <Border Grid.Row="3" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,8,0,0" Margin="0,8,0,0">
+      <Border Grid.Row="2" BorderBrush="{StaticResource BorderBrush}" BorderThickness="0,1,0,0" Padding="0,8,0,0" Margin="0,8,0,0">
         <StackPanel><DockPanel><TextBlock x:Name="PeakText" DockPanel.Dock="Right" Width="75" TextAlignment="Right" Foreground="{StaticResource TextSecondaryBrush}" /><TextBlock x:Name="StatusText" Text="Uruchamianie…" FontWeight="SemiBold" /></DockPanel>
           <ProgressBar x:Name="PeakBar" Maximum="100" Height="5" Margin="0,7,0,4" AutomationProperties.Name="Bieżący poziom mikrofonu" />
           <TextBlock x:Name="NoticeText" Foreground="{StaticResource TextMutedBrush}" FontSize="11.733" TextWrapping="Wrap" />
         </StackPanel>
       </Border>
-      <DockPanel x:Name="ActionBar" Grid.Row="4" Margin="0,10,0,10">
+      <DockPanel x:Name="ActionBar" Grid.Row="3" Margin="0,8,0,8">
         <StackPanel DockPanel.Dock="Right" Orientation="Horizontal">
           <Button Content="Do zasobnika" Click="Hide_Click" Style="{StaticResource GhostButton}" />
           <Button x:Name="SaveButton" Content="Zapisz i zastosuj" Click="Apply_Click" Style="{StaticResource PrimaryButton}" />
@@ -163,9 +165,9 @@
         </StackPanel>
         <TextBlock Text="Zamknięcie okna nie zatrzymuje automatyki." Foreground="{StaticResource TextMutedBrush}" VerticalAlignment="Center" TextWrapping="Wrap" Margin="0,0,16,0" />
       </DockPanel>
-      <Border x:Name="ProjectInfoCard" Grid.Row="5" Style="{StaticResource Card}" Padding="16,8">
+      <Border x:Name="ProjectInfoCard" Grid.Row="4" Style="{StaticResource Card}" Padding="14,6">
         <Grid><Grid.ColumnDefinitions><ColumnDefinition /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-          <StackPanel VerticalAlignment="Center"><TextBlock Text="DictaMute" Style="{StaticResource Heading}" /><TextBlock Text="Automatyczne ściszanie i pauzowanie dźwięku." Foreground="{StaticResource TextSecondaryBrush}" FontSize="11.733" Margin="0,3,0,0" /></StackPanel>
+          <StackPanel VerticalAlignment="Center" Orientation="Horizontal"><TextBlock Text="DictaMute" FontWeight="SemiBold" /><TextBlock x:Name="VersionText" Foreground="{StaticResource TextMutedBrush}" FontSize="11.333" Margin="8,0,0,0" /></StackPanel>
           <StackPanel Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Center">
             <TextBlock Text="KeyffMS / aiteracja.pl · MIT" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11.733" HorizontalAlignment="Right" />
             <TextBlock HorizontalAlignment="Right" Margin="0,3,0,0" FontSize="11.733"><Hyperlink NavigateUri="https://github.com/KeyffMS/DictaMute" RequestNavigate="ProjectLink_RequestNavigate">Kod źródłowy DictaMute</Hyperlink></TextBlock>
