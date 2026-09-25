@@ -41,8 +41,16 @@ internal static class Program
             Directory.CreateDirectory(output);
             var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             Console.WriteLine("Theme assembly: " + typeof(DictaMute.App).Assembly.GetName().Name);
-            app.Resources.MergedDictionaries.Add(new ResourceDictionary
-            { Source = new Uri("/DictaMute;component/Themes/Suite.xaml", UriKind.Relative) });
+            // Load the complete application dictionary, including application-level overrides.
+            // The production App class is not instantiated: startup must not open real devices.
+            XNamespace presentation = "http://schemas.microsoft.com/winfx/2006/xaml/presentation";
+            var appDocument = XDocument.Load(Path.Combine(repository, "src", "DictaMute", "App.xaml"));
+            var resourceElement = appDocument.Root?.Element(presentation + "Application.Resources")?.Element(presentation + "ResourceDictionary")
+                ?? throw new InvalidOperationException("Missing application resources.");
+            var resources = new XElement(resourceElement);
+            resources.SetAttributeValue(XNamespace.Xmlns + "x", "http://schemas.microsoft.com/winfx/2006/xaml");
+            app.Resources = (ResourceDictionary)XamlReader.Parse(resources.ToString(), new ParserContext
+            { BaseUri = new Uri("pack://application:,,,/DictaMute;component/") });
 
             // Use the real view markup and compiled theme, but deliberately exclude event
             // handlers and the MainWindow constructor: no audio, settings, tray or hotkeys.
@@ -57,7 +65,11 @@ internal static class Program
             window.Left = 0;
             window.Top = 0;
             window.Show();
+            // Capturing Window.Content excludes the parent window's background. Paint the
+            // same brush in the fixture so screenshots are opaque, like the real window.
+            ((Panel)window.Content).Background = window.Background;
             Pump(window);
+            Check(((SolidColorBrush)((Panel)window.Content).Background).Color == (Color)app.FindResource("WindowBackgroundColor"), "Preview includes the real window background");
 
             foreach (var name in new[] { "AutomationEnabled", "ProfileBox", "ProfileName", "SourcesGrid", "TargetsGrid", "TargetModeColumn", "CaptureApps", "PlaybackApps", "ThresholdSlider", "HoldSlider", "DuckSlider", "FadeSlider", "AllExceptSources", "AnyMicrophone", "GlobalModeBox", "SourceHotkey", "TargetHotkey", "ToggleHotkey", "MediaSessions", "PeakText", "StatusText", "PeakBar", "NoticeText" })
                 Check(window.FindName(name) is not null, "Existing controller contract: " + name);
@@ -158,11 +170,14 @@ internal static class Program
                 Slider.IncreaseSmall.Execute(null, slider);
                 Check(slider.Value > previous, "Keyboard slider command: " + name);
             }
-            Find<Expander>(window, "AdvancedOptions").IsExpanded = true;
+            var advanced = Find<Expander>(window, "AdvancedOptions");
+            advanced.IsExpanded = true;
             Pump(window);
+            var advancedHeader = (ToggleButton)advanced.Template.FindName("Header", advanced);
+            Check(((SolidColorBrush)advancedHeader.Foreground).Color == (Color)app.FindResource("TextPrimaryColor"), "Advanced header keeps readable light text");
             Find<ScrollViewer>(window, "MainScroll").ScrollToEnd();
             Pump(window);
-            Check(Find<Expander>(window, "AdvancedOptions").IsExpanded, "Advanced settings expand");
+            Check(advanced.IsExpanded, "Advanced settings expand");
             Capture((FrameworkElement)window.Content, Path.Combine(output, "04-settings.png"));
             window.Width = 960;
             window.Height = 680;

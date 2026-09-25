@@ -7,6 +7,10 @@
       <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="Themes/Suite.xaml" />
       </ResourceDictionary.MergedDictionaries>
+      <!-- Native ToggleButton foreground does not inherit the Expander's text color. -->
+      <Style TargetType="ToggleButton">
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+      </Style>
     </ResourceDictionary>
   </Application.Resources>
 </Application>
