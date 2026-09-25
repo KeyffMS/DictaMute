@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Interop;
@@ -34,6 +35,8 @@ public partial class MainWindow
     {
         if (_presentationAttached) return;
         _presentationAttached = true;
+        var version = Assembly.GetExecutingAssembly().GetName().Version;
+        VersionText.Text = version is null ? string.Empty : $"v{version.Major}.{version.Minor}.{version.Build}";
         if (_tray.ContextMenuStrip is { } menu)
         {
             _suiteTrayTheme = new SuiteTrayTheme();
