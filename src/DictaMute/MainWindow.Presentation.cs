@@ -52,13 +52,14 @@ public partial class MainWindow
         {
             if (_quitting) return;
             var faulted = _faulted || snapshot.FatalError is not null;
-            var background = faulted ? "DangerSoftBrush" : !snapshot.Enabled ? "SurfaceRaisedBrush"
+            var profileDisabled = _settings.Enabled && !_settings.Current.IsEnabled;
+            var background = faulted ? "DangerSoftBrush" : profileDisabled || !snapshot.Enabled ? "SurfaceRaisedBrush"
                 : snapshot.Active ? "AccentSoftBrush" : "SuccessSoftBrush";
-            var foreground = faulted ? "DangerBrush" : !snapshot.Enabled ? "TextSecondaryBrush"
+            var foreground = faulted ? "DangerBrush" : profileDisabled || !snapshot.Enabled ? "TextSecondaryBrush"
                 : snapshot.Active ? "AccentHoverBrush" : "SuccessBrush";
             AutomationStateBadge.Background = (Brush)FindResource(background);
             AutomationStateText.Foreground = (Brush)FindResource(foreground);
-            AutomationStateText.Text = faulted ? "BŁĄD" : !snapshot.Enabled ? "WYŁĄCZONA"
+            AutomationStateText.Text = faulted ? "BŁĄD" : profileDisabled ? "PROFIL WYŁ." : !snapshot.Enabled ? "WYŁĄCZONA"
                 : snapshot.Active ? "WYCISZANIE" : "GOTOWA";
         });
     }

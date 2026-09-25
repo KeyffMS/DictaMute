@@ -31,8 +31,11 @@ var tests = new (string Name, Action Run)[]
     ("Manual volume changes are respected", () => { var s = new FakeVolume(.8f); var l = new VolumeLease(s, Reaction.Duck); l.Apply(.2f, TimeSpan.Zero, TimeSpan.Zero); s.Volume = .5f; l.Apply(.2f, TimeSpan.Zero, TimeSpan.Zero); l.Restore(TimeSpan.Zero, TimeSpan.Zero); Near(.5f, s.Volume); }),
     ("Manual unmute is respected", () => { var s = new FakeVolume(.8f); var l = new VolumeLease(s, Reaction.Mute); l.Apply(0, TimeSpan.Zero, TimeSpan.Zero); s.Muted = false; l.Apply(0, TimeSpan.Zero, TimeSpan.Zero); Check(!s.Muted); }),
     ("Duck does not change the mute bit", () => { var s = new FakeVolume(.8f) { Muted = true }; var l = new VolumeLease(s, Reaction.Duck); l.Apply(.2f, TimeSpan.Zero, TimeSpan.Zero); l.Restore(TimeSpan.Zero, TimeSpan.Zero); Check(s.Muted); }),
+    ("Profiles are enabled by default", () => Check(new Profile().IsEnabled)),
+    ("Disabled profile remains valid", () => { var p = new Profile { IsEnabled = false }; p.Validate(); Check(!p.IsEnabled); }),
     ("Invalid profile is rejected", () => Throws<InvalidDataException>(() => new Profile { Threshold = float.NaN }.Validate())),
     ("Invalid active profile is rejected", () => Throws<InvalidDataException>(() => new AppSettings { ActiveProfile = 99 }.Validate())),
+    ("Disabled profile round trip", DisabledProfileRoundTrip),
     ("Settings round trip and atomic overwrite", SettingsRoundTrip),
     ("Malformed settings are backed up", CorruptSettings)
 };
@@ -54,6 +57,17 @@ static void Throws<T>(Action action) where T : Exception
 {
     try { action(); } catch (T) { return; }
     throw new Exception($"Expected {typeof(T).Name}.");
+}
+static void DisabledProfileRoundTrip()
+{
+    var directory = Path.Combine(Path.GetTempPath(), "DictaMute-profile-test-" + Guid.NewGuid().ToString("N"));
+    try
+    {
+        var store = new SettingsStore(Path.Combine(directory, "settings.json"));
+        store.Save(new AppSettings { Profiles = [new Profile { Name = "Wyłączony", IsEnabled = false }], ActiveProfile = 0 });
+        Check(!store.Load().Current.IsEnabled);
+    }
+    finally { if (Directory.Exists(directory)) Directory.Delete(directory, true); }
 }
 static void SettingsRoundTrip()
 {

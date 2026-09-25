@@ -1,7 +1,7 @@
 <Window x:Class="DictaMute.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="DictaMute" Width="1320" Height="860" MinWidth="960" MinHeight="620"
+        Title="DictaMute" Icon="{StaticResource DictaMuteIcon}" Width="1320" Height="860" MinWidth="960" MinHeight="620"
         WindowStartupLocation="CenterScreen" Loaded="Presentation_Loaded"
         SourceInitialized="Presentation_SourceInitialized" Closed="Presentation_Closed">
   <Grid>
@@ -9,10 +9,13 @@
     <Border x:Name="SuiteHeader" Background="{StaticResource HeaderBackgroundBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="5,0,0,0">
       <Grid Margin="26,10,24,10">
         <Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
-        <StackPanel VerticalAlignment="Center">
-          <TextBlock Text="DictaMute" FontSize="24" FontWeight="Bold" />
-          <TextBlock Text="Automatycznie ścisza, wycisza lub pauzuje dźwięk, gdy używasz mikrofonu."
-                     Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,3,0,0" TextWrapping="Wrap" />
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <Image Source="{StaticResource DictaMuteIcon}" Width="30" Height="30" Margin="0,0,10,0" />
+          <StackPanel VerticalAlignment="Center">
+            <TextBlock Text="DictaMute" FontSize="24" FontWeight="Bold" />
+            <TextBlock Text="Automatycznie ścisza, wycisza lub pauzuje dźwięk, gdy używasz mikrofonu."
+                       Foreground="{StaticResource TextSecondaryBrush}" FontSize="12" Margin="0,3,0,0" TextWrapping="Wrap" />
+          </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
           <TextBlock Text="Tryb automatyczny" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0" />
@@ -33,11 +36,42 @@
         <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="Auto" />
       </Grid.RowDefinitions>
       <Grid Grid.Row="0" Height="34" Margin="0,0,0,6">
-        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="180" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="180" /><ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" /><ColumnDefinition Width="Auto" /></Grid.ColumnDefinitions>
         <TextBlock Text="Profil" FontWeight="SemiBold" VerticalAlignment="Center" Margin="0,0,10,0" />
         <ComboBox x:Name="ProfileBox" Grid.Column="1" Style="{StaticResource CompactComboBox}" DisplayMemberPath="Name" SelectionChanged="ProfileBox_SelectionChanged" AutomationProperties.Name="Aktywny profil" />
         <TextBox x:Name="ProfileName" Grid.Column="2" Style="{StaticResource CompactTextBox}" Margin="8,0" ToolTip="Nazwa bieżącego profilu" AutomationProperties.Name="Nazwa bieżącego profilu" />
-        <StackPanel Grid.Column="3" Orientation="Horizontal">
+        <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="10,0,12,0">
+          <TextBlock Text="Profil aktywny" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource TextSecondaryBrush}" />
+          <CheckBox x:Name="ProfileEnabled" Style="{StaticResource SuiteSwitch}" VerticalAlignment="Center" Margin="0,0,8,0"
+                    AutomationProperties.Name="Włącz wybrany profil" Click="ProfileEnabled_Click" />
+          <Border x:Name="ProfileStateBadge" VerticalAlignment="Center" Padding="8,3" CornerRadius="7">
+            <Border.Style>
+              <Style TargetType="Border">
+                <Setter Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ElementName=ProfileEnabled, Path=IsChecked}" Value="True">
+                    <Setter Property="Background" Value="{StaticResource SuccessSoftBrush}" />
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </Border.Style>
+            <TextBlock x:Name="ProfileStateText" FontSize="10.667" FontWeight="SemiBold">
+              <TextBlock.Style>
+                <Style TargetType="TextBlock">
+                  <Setter Property="Text" Value="WYŁĄCZONY" />
+                  <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                  <Style.Triggers>
+                    <DataTrigger Binding="{Binding ElementName=ProfileEnabled, Path=IsChecked}" Value="True">
+                      <Setter Property="Text" Value="AKTYWNY" />
+                      <Setter Property="Foreground" Value="{StaticResource SuccessBrush}" />
+                    </DataTrigger>
+                  </Style.Triggers>
+                </Style>
+              </TextBlock.Style>
+            </TextBlock>
+          </Border>
+        </StackPanel>
+        <StackPanel Grid.Column="4" Orientation="Horizontal">
           <Button Content="Nowy profil" Click="NewProfile_Click" MinHeight="32" Height="32" Padding="14,4" />
           <Button Content="Usuń profil" Style="{StaticResource DangerButton}" Click="DeleteProfile_Click" MinHeight="32" Height="32" Padding="14,4" Margin="0" />
         </StackPanel>

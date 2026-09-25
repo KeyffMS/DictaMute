@@ -53,7 +53,7 @@ public partial class MainWindow : Window
         InitializeComponent();
         _settings = settings;
         _store = store;
-        _engine = new(settings.Current, settings.Enabled);
+        _engine = new(settings.Current, settings.Enabled && settings.Current.IsEnabled);
         _engine.Updated += OnSnapshot;
         SourcesGrid.ItemsSource = _sources;
         TargetsGrid.ItemsSource = _targets;
@@ -88,6 +88,9 @@ public partial class MainWindow : Window
         SystemEvents.PowerModeChanged += PowerModeChanged;
     }
 
+    private bool IsAutomationEffective(AppSettings settings) =>
+        settings.Enabled && settings.Current.IsEnabled && !_suspended && !_faulted;
+
     private void LoadProfile()
     {
         _loading = true;
@@ -97,6 +100,7 @@ public partial class MainWindow : Window
             ProfileBox.SelectedIndex = _settings.ActiveProfile;
             var profile = _settings.Current;
             ProfileName.Text = profile.Name;
+            ProfileEnabled.IsChecked = profile.IsEnabled;
             AutomationEnabled.IsChecked = _settings.Enabled;
             _sources.Clear();
             foreach (var app in profile.Sources) _sources.Add(new(app));
@@ -124,7 +128,8 @@ public partial class MainWindow : Window
         var profiles = _settings.Profiles.ToArray();
         profiles[_settings.ActiveProfile] = new Profile
         {
-            Name = ProfileName.Text.Trim(), Sources = _sources.Select(r => r.App).ToArray(),
+            Name = ProfileName.Text.Trim(), IsEnabled = ProfileEnabled.IsChecked == true,
+            Sources = _sources.Select(r => r.App).ToArray(),
             Targets = _targets.Select(r => new TargetRule(r.App, r.Mode,
                 string.IsNullOrWhiteSpace(r.MediaSessionId) ? null : r.MediaSessionId.Trim())).ToArray(),
             Threshold = (float)(ThresholdSlider.Value / 100),
@@ -155,13 +160,15 @@ public partial class MainWindow : Window
             throw;
         }
         _settings = next;
-        _engine.Configure(next.Current, next.Enabled && !_suspended && !_faulted);
+        _engine.Configure(next.Current, IsAutomationEffective(next));
         _loading = true;
         ProfileBox.ItemsSource = _settings.Profiles;
         ProfileBox.SelectedIndex = _settings.ActiveProfile;
         _loading = false;
         RefreshTrayMenu();
-        if (notify) _notice = "Zapisano i zastosowano ustawienia.";
+        if (notify) _notice = next.Current.IsEnabled
+            ? "Zapisano i zastosowano ustawienia."
+            : "Zapisano ustawienia. Wybrany profil jest wyłączony.";
     }
 
     private void Apply_Click(object sender, RoutedEventArgs e)
@@ -179,11 +186,38 @@ public partial class MainWindow : Window
         // Disabling must always restore sound, even when unrelated editor fields are invalid.
         _settings = _settings with { Enabled = enabled };
         AutomationEnabled.IsChecked = enabled;
-        _engine.Configure(_settings.Current, enabled && !_suspended);
+        _engine.Configure(_settings.Current, IsAutomationEffective(_settings));
         try { _store.Save(_settings); } catch (Exception ex) { Report(ex); }
         RefreshTrayMenu();
     }
     private void ToggleAutomation_Click(object sender, RoutedEventArgs e) => SetEnabled(AutomationEnabled.IsChecked == true);
+
+    private void ProfileEnabled_Click(object sender, RoutedEventArgs e)
+    {
+        if (_loading || _quitting) return;
+        var enabled = ProfileEnabled.IsChecked == true;
+        try
+        {
+            var profiles = _settings.Profiles.ToArray();
+            profiles[_settings.ActiveProfile] = profiles[_settings.ActiveProfile] with { IsEnabled = enabled };
+            var next = _settings with { Profiles = profiles };
+            next.Validate();
+            _store.Save(next);
+            _settings = next;
+            _engine.Configure(next.Current, IsAutomationEffective(next));
+            _notice = enabled
+                ? $"Profil „{next.Current.Name}” został włączony."
+                : $"Profil „{next.Current.Name}” został wyłączony.";
+            RefreshTrayMenu();
+        }
+        catch (Exception ex)
+        {
+            _loading = true;
+            ProfileEnabled.IsChecked = _settings.Current.IsEnabled;
+            _loading = false;
+            Report(ex);
+        }
+    }
 
     private void ProfileBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
     {
@@ -199,7 +233,7 @@ public partial class MainWindow : Window
             var next = _settings with { ActiveProfile = index };
             _store.Save(next);
             _settings = next;
-            _engine.Configure(next.Current, next.Enabled && !_suspended && !_faulted);
+            _engine.Configure(next.Current, IsAutomationEffective(next));
             LoadProfile();
         }
         catch (Exception ex)
@@ -220,7 +254,7 @@ public partial class MainWindow : Window
                 ActiveProfile = _settings.Profiles.Length
             };
             _store.Save(next); _settings = next;
-            _engine.Configure(next.Current, next.Enabled && !_suspended && !_faulted);
+            _engine.Configure(next.Current, IsAutomationEffective(next));
             LoadProfile();
         }
         catch (Exception ex) { Report(ex); }
@@ -235,7 +269,7 @@ public partial class MainWindow : Window
             var next = _settings with
             { Profiles = _settings.Profiles.Where((_, i) => i != _settings.ActiveProfile).ToArray(), ActiveProfile = 0 };
             _store.Save(next); _settings = next;
-            _engine.Configure(next.Current, next.Enabled && !_suspended && !_faulted);
+            _engine.Configure(next.Current, IsAutomationEffective(next));
             LoadProfile();
         }
         catch (Exception ex) { Report(ex); }
@@ -328,10 +362,14 @@ public partial class MainWindow : Window
             }
             PeakBar.Value = snapshot.Peak * 100;
             PeakText.Text = $"{snapshot.Peak * 100:F1}%";
-            StatusText.Text = _faulted ? "Automatyka zatrzymana po błędzie" : !snapshot.Enabled ? "Automatyka wyłączona"
+            var profileDisabled = _settings.Enabled && !_settings.Current.IsEnabled;
+            StatusText.Text = _faulted ? "Automatyka zatrzymana po błędzie"
+                : profileDisabled ? "Wybrany profil jest wyłączony"
+                : !snapshot.Enabled ? "Automatyka wyłączona"
                 : snapshot.Active ? "Wyciszanie aktywne" : "Oczekiwanie na sygnał ze źródeł";
             NoticeText.Text = snapshot.Warning ?? _notice ?? "Zapisz ustawienia po zmianie suwaków lub trybu reakcji.";
-            _tray.Text = "DictaMute — " + (_faulted ? "błąd" : !snapshot.Enabled ? "wyłączony" : snapshot.Active ? "wyciszanie aktywne" : "gotowy");
+            _tray.Text = "DictaMute — " + (_faulted ? "błąd" : profileDisabled ? "profil wyłączony"
+                : !snapshot.Enabled ? "wyłączony" : snapshot.Active ? "wyciszanie aktywne" : "gotowy");
             _tray.Icon = snapshot.Active ? System.Drawing.SystemIcons.Warning
                 : snapshot.Enabled ? System.Drawing.SystemIcons.Information : System.Drawing.SystemIcons.Application;
         });
@@ -354,7 +392,9 @@ public partial class MainWindow : Window
         for (var i = 0; i < _settings.Profiles.Length; i++)
         {
             var index = i;
-            var item = new Forms.ToolStripMenuItem(_settings.Profiles[i].Name) { Checked = i == _settings.ActiveProfile };
+            var profile = _settings.Profiles[i];
+            var text = profile.Name + (profile.IsEnabled ? "" : " — wyłączony");
+            var item = new Forms.ToolStripMenuItem(text) { Checked = i == _settings.ActiveProfile };
             item.Click += (_, _) => Dispatcher.InvokeAsync(() => SelectProfile(index));
             _trayProfiles.DropDownItems.Add(item);
         }
@@ -380,7 +420,7 @@ public partial class MainWindow : Window
         Dispatcher.InvokeAsync(() =>
         {
             _suspended = e.Mode == PowerModes.Suspend || (e.Mode != PowerModes.Resume && _suspended);
-            _engine.Configure(_settings.Current, _settings.Enabled && !_suspended && !_faulted);
+            _engine.Configure(_settings.Current, IsAutomationEffective(_settings));
         });
     }
     private async void Exit_Click(object sender, RoutedEventArgs e) => await ShutdownAsync();

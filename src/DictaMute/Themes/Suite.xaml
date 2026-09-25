@@ -47,6 +47,31 @@
   <SolidColorBrush x:Key="DangerPressedBrush" Color="{StaticResource DangerPressedColor}" />
   <SolidColorBrush x:Key="DangerBorderBrush" Color="{StaticResource DangerBorderColor}" />
   <SolidColorBrush x:Key="SelectionBrush" Color="{StaticResource SelectionColor}" />
+  <DrawingImage x:Key="DictaMuteIcon">
+    <DrawingImage.Drawing>
+      <DrawingGroup>
+        <GeometryDrawing Brush="{StaticResource SurfaceBrush}">
+          <GeometryDrawing.Geometry><RectangleGeometry Rect="4,4,56,56" RadiusX="14" RadiusY="14" /></GeometryDrawing.Geometry>
+          <GeometryDrawing.Pen><Pen Brush="{StaticResource BorderBrush}" Thickness="1.5" /></GeometryDrawing.Pen>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="{StaticResource AccentBrush}">
+          <GeometryDrawing.Geometry><RectangleGeometry Rect="25,14,14,24" RadiusX="7" RadiusY="7" /></GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="{StaticResource AccentBrush}">
+          <GeometryDrawing.Geometry><RectangleGeometry Rect="29,36,6,9" RadiusX="3" RadiusY="3" /></GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Geometry="M21,30 C21,36.075 25.925,41 32,41 C38.075,41 43,36.075 43,30">
+          <GeometryDrawing.Pen><Pen Brush="{StaticResource SuccessBrush}" Thickness="3" StartLineCap="Round" EndLineCap="Round" /></GeometryDrawing.Pen>
+        </GeometryDrawing>
+        <GeometryDrawing Geometry="M24,48 L40,48">
+          <GeometryDrawing.Pen><Pen Brush="{StaticResource TextSecondaryBrush}" Thickness="3" StartLineCap="Round" EndLineCap="Round" /></GeometryDrawing.Pen>
+        </GeometryDrawing>
+        <GeometryDrawing Geometry="M45.5,18.5 L18.5,45.5">
+          <GeometryDrawing.Pen><Pen Brush="{StaticResource DangerBrush}" Thickness="5" StartLineCap="Round" EndLineCap="Round" /></GeometryDrawing.Pen>
+        </GeometryDrawing>
+      </DrawingGroup>
+    </DrawingImage.Drawing>
+  </DrawingImage>
   <CornerRadius x:Key="CardRadius">12</CornerRadius>
   <CornerRadius x:Key="ButtonRadius">9</CornerRadius>
   <CornerRadius x:Key="InputRadius">7</CornerRadius>

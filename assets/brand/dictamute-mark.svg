@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>DictaMute</title>
+  <desc>Microphone crossed by a mute slash, using the DictaMute suite colors.</desc>
+  <rect x="4.75" y="4.75" width="54.5" height="54.5" rx="13.25" fill="#1D222D" stroke="#363F51" stroke-width="1.5"/>
+  <rect x="25" y="14" width="14" height="24" rx="7" fill="#708BFF"/>
+  <rect x="29" y="36" width="6" height="9" rx="3" fill="#708BFF"/>
+  <path d="M21 30C21 36.075 25.925 41 32 41C38.075 41 43 36.075 43 30" stroke="#4DD3A9" stroke-width="3" stroke-linecap="round"/>
+  <path d="M24 48H40" stroke="#BEC8D8" stroke-width="3" stroke-linecap="round"/>
+  <path d="M45.5 18.5L18.5 45.5" stroke="#FF6F80" stroke-width="5" stroke-linecap="round"/>
+</svg>

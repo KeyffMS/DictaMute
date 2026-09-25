@@ -70,8 +70,9 @@ internal static class Program
             ((Panel)window.Content).Background = window.Background;
             Pump(window);
             Check(((SolidColorBrush)((Panel)window.Content).Background).Color == (Color)app.FindResource("WindowBackgroundColor"), "Preview includes the real window background");
+            Check(window.Icon is not null, "Window uses DictaMute vector icon");
 
-            foreach (var name in new[] { "AutomationEnabled", "ProfileBox", "ProfileName", "SourcesGrid", "TargetsGrid", "TargetModeColumn", "CaptureApps", "PlaybackApps", "ThresholdSlider", "HoldSlider", "DuckSlider", "FadeSlider", "AllExceptSources", "AnyMicrophone", "GlobalModeBox", "SourceHotkey", "TargetHotkey", "ToggleHotkey", "MediaSessions", "PeakText", "StatusText", "PeakBar", "NoticeText" })
+            foreach (var name in new[] { "AutomationEnabled", "ProfileBox", "ProfileName", "ProfileEnabled", "ProfileStateBadge", "ProfileStateText", "SourcesGrid", "TargetsGrid", "TargetModeColumn", "CaptureApps", "PlaybackApps", "ThresholdSlider", "HoldSlider", "DuckSlider", "FadeSlider", "AllExceptSources", "AnyMicrophone", "GlobalModeBox", "SourceHotkey", "TargetHotkey", "ToggleHotkey", "MediaSessions", "PeakText", "StatusText", "PeakBar", "NoticeText" })
                 Check(window.FindName(name) is not null, "Existing controller contract: " + name);
 
             var palette = new Dictionary<string, string>
@@ -103,6 +104,14 @@ internal static class Program
             profiles.ItemsSource = new[] { new Choice("Dyktowanie", "Dyktowanie"), new Choice("Spotkania", "Spotkania") };
             profiles.SelectedIndex = 0;
             Find<TextBox>(window, "ProfileName").Text = "Dyktowanie";
+            var profileEnabled = Find<CheckBox>(window, "ProfileEnabled");
+            profileEnabled.IsChecked = true;
+            Pump(window);
+            Check(Find<TextBlock>(window, "ProfileStateText").Text == "AKTYWNY", "Profile state is visible as active");
+            profileEnabled.IsChecked = false;
+            Pump(window);
+            Check(Find<TextBlock>(window, "ProfileStateText").Text == "WYŁĄCZONY", "Profile state is visible as disabled");
+            profileEnabled.IsChecked = true;
             var sources = new ObservableCollection<Row> { new() { Name = "Dyktowanie.exe", Peak = 42 }, new() { Name = "Rozmowa.exe", Peak = 18 } };
             var targets = new ObservableCollection<Row> { new() { Name = "Odtwarzacz.exe", Mode = Reaction.Duck }, new() { Name = "Muzyka.exe", Mode = Reaction.Pause } };
             Find<DataGrid>(window, "SourcesGrid").ItemsSource = sources;

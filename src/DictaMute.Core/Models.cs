@@ -30,6 +30,7 @@ public sealed record TargetRule(AppIdentity App, Reaction Mode = Reaction.Duck,
 public sealed record Profile
 {
     public string Name { get; init; } = "Dyktowanie";
+    public bool IsEnabled { get; init; } = true;
     public AppIdentity[] Sources { get; init; } = [];
     public TargetRule[] Targets { get; init; } = [];
     public bool AllExceptSources { get; init; }
