@@ -40,6 +40,11 @@ public partial class MainWindow : Window
     private readonly Forms.NotifyIcon _tray;
     private readonly Forms.ToolStripMenuItem _trayToggle;
     private readonly Forms.ToolStripMenuItem _trayProfiles;
+    private readonly System.Drawing.Icon _trayReadyIcon;
+    private readonly System.Drawing.Icon _trayActiveIcon;
+    private readonly System.Drawing.Icon _trayDisabledIcon;
+    private readonly System.Drawing.Icon _trayErrorIcon;
+    private bool _trayIconsDisposed;
     private HotkeyService? _hotkeys;
     private bool _loading;
     private bool _quitting;
@@ -61,6 +66,11 @@ public partial class MainWindow : Window
         GlobalModeBox.ItemsSource = Enum.GetValues<Reaction>();
         _notice = store.RecoveryNotice;
 
+        _trayReadyIcon = TrayIconFactory.Create(TrayIconState.Ready);
+        _trayActiveIcon = TrayIconFactory.Create(TrayIconState.Active);
+        _trayDisabledIcon = TrayIconFactory.Create(TrayIconState.Disabled);
+        _trayErrorIcon = TrayIconFactory.Create(TrayIconState.Error);
+
         _trayToggle = new Forms.ToolStripMenuItem("Automatyka");
         _trayToggle.Click += (_, _) => Dispatcher.InvokeAsync(() => SetEnabled(!_settings.Enabled));
         _trayProfiles = new Forms.ToolStripMenuItem("Profil");
@@ -72,7 +82,8 @@ public partial class MainWindow : Window
         menu.Items.Add("Zakończ", null, (_, _) => Dispatcher.InvokeAsync(async () => await ShutdownAsync()));
         _tray = new Forms.NotifyIcon
         {
-            Text = "DictaMute", Icon = System.Drawing.SystemIcons.Application,
+            Text = "DictaMute",
+            Icon = IsAutomationEffective(_settings) ? _trayReadyIcon : _trayDisabledIcon,
             ContextMenuStrip = menu, Visible = true
         };
         _tray.DoubleClick += (_, _) => Dispatcher.InvokeAsync(ShowWindow);
@@ -370,8 +381,10 @@ public partial class MainWindow : Window
             NoticeText.Text = snapshot.Warning ?? _notice ?? "Zapisz ustawienia po zmianie suwaków lub trybu reakcji.";
             _tray.Text = "DictaMute — " + (_faulted ? "błąd" : profileDisabled ? "profil wyłączony"
                 : !snapshot.Enabled ? "wyłączony" : snapshot.Active ? "wyciszanie aktywne" : "gotowy");
-            _tray.Icon = snapshot.Active ? System.Drawing.SystemIcons.Warning
-                : snapshot.Enabled ? System.Drawing.SystemIcons.Information : System.Drawing.SystemIcons.Application;
+            _tray.Icon = _faulted ? _trayErrorIcon
+                : profileDisabled || !snapshot.Enabled ? _trayDisabledIcon
+                : snapshot.Active ? _trayActiveIcon
+                : _trayReadyIcon;
         });
     }
 
@@ -399,6 +412,16 @@ public partial class MainWindow : Window
             _trayProfiles.DropDownItems.Add(item);
         }
     }
+    private void DisposeTrayIcons()
+    {
+        if (_trayIconsDisposed) return;
+        _trayIconsDisposed = true;
+        _trayReadyIcon.Dispose();
+        _trayActiveIcon.Dispose();
+        _trayDisabledIcon.Dispose();
+        _trayErrorIcon.Dispose();
+    }
+
     private void Report(Exception ex)
     {
         Log.Write("Operacja interfejsu nie powiodła się.", ex);
@@ -437,6 +460,7 @@ public partial class MainWindow : Window
             _tray.Visible = false;
             _tray.ContextMenuStrip?.Dispose();
             _tray.Dispose();
+            DisposeTrayIcons();
             System.Windows.Application.Current.Shutdown();
         }
     }
@@ -449,5 +473,6 @@ public partial class MainWindow : Window
         catch (Exception ex) { Log.Write("Kończenie sesji Windows.", ex); }
         _hotkeys?.Dispose();
         _tray.Dispose();
+        DisposeTrayIcons();
     }
 }
