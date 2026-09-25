@@ -113,6 +113,11 @@ internal static class Program
             var global = Find<ComboBox>(window, "GlobalModeBox");
             global.ItemsSource = Enum.GetValues<Reaction>();
             global.SelectedIndex = 0;
+            Check(
+                "Compact app selectors keep dark background",
+                ((SolidColorBrush)((ComboBox)Find(root, "CaptureApps")).Background).Color == (Color)resources["SurfaceRaisedColor"] &&
+                ((SolidColorBrush)((ComboBox)Find(root, "PlaybackApps")).Background).Color == (Color)resources["SurfaceRaisedColor"]);
+
             foreach (var name in new[] { "CaptureApps", "PlaybackApps" })
             {
                 var box = Find<ComboBox>(window, name);
