@@ -31,3 +31,13 @@ The canonical origin is `https://aiteracja.pl` unless explicitly overridden.
 - GitHub Releases remain the binary authority;
 - no official-download button until an official release exists;
 - all public claims must remain synchronized with brand/privacy/security/release authorities.
+
+
+## URL policy
+
+- canonical public routes are lowercase;
+- directory-style routes use a trailing slash;
+- canonical URLs always use `https://aiteracja.pl/dictamute/`;
+- GitHub Pages fallback builds use `/DictaMute/` for internal navigation but keep Aiteracja canonical metadata;
+- fallback `robots.txt` disallows indexing so it cannot become a competing indexed origin;
+- canonical builds generate `sitemap.xml` and an indexing-enabled `robots.txt`.

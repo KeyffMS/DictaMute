@@ -4,9 +4,10 @@ from __future__ import annotations
 import argparse
 import html
 import importlib.util
+import json
 import shutil
 from pathlib import Path
-from urllib.parse import urljoin
+from xml.sax.saxutils import escape as xml_escape
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -39,6 +40,26 @@ def page_html(page, nav, base_path, canonical_origin, canonical_base, route):
     h1 = html.escape(page["h1"])
     home = html.escape(base_path)
     icon = html.escape(base_path + "assets/dictamute-mark.svg")
+    social = html.escape(canonical_origin.rstrip("/") + canonical_base + "assets/social-preview.svg")
+    structured = {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "DictaMute",
+        "applicationCategory": "UtilitiesApplication",
+        "operatingSystem": "Windows 10, Windows 11",
+        "softwareVersion": "0.0.107",
+        "isAccessibleForFree": True,
+        "license": "https://github.com/KeyffMS/DictaMute/blob/first-attempt/LICENSE",
+        "codeRepository": "https://github.com/KeyffMS/DictaMute",
+        "url": canonical_origin.rstrip("/") + canonical_base,
+        "releaseNotes": "https://github.com/KeyffMS/DictaMute/releases",
+        "publisher": {
+            "@type": "Organization",
+            "name": "KeyffMS / aiteracja.pl",
+            "url": "https://aiteracja.pl/"
+        }
+    }
+    structured_json = html.escape(json.dumps(structured, ensure_ascii=False), quote=False)
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -47,6 +68,18 @@ def page_html(page, nav, base_path, canonical_origin, canonical_base, route):
   <title>{title}</title>
   <meta name="description" content="{desc}">
   <link rel="canonical" href="{html.escape(canonical)}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="DictaMute">
+  <meta property="og:title" content="{title}">
+  <meta property="og:description" content="{desc}">
+  <meta property="og:url" content="{html.escape(canonical)}">
+  <meta property="og:image" content="{social}">
+  <meta property="og:locale" content="en_US">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{title}">
+  <meta name="twitter:description" content="{desc}">
+  <meta name="twitter:image" content="{social}">
+  <script type="application/ld+json">{structured_json}</script>
   <link rel="icon" href="{icon}" type="image/svg+xml">
   <link rel="stylesheet" href="{html.escape(base_path + 'assets/styles.css')}">
 </head>
@@ -105,6 +138,7 @@ def main():
     assets.mkdir()
     shutil.copy2(ROOT / "site" / "assets" / "styles.css", assets / "styles.css")
     shutil.copy2(ROOT / "assets" / "brand" / "dictamute-mark.svg", assets / "dictamute-mark.svg")
+    shutil.copy2(ROOT / "site" / "assets" / "social-preview.svg", assets / "social-preview.svg")
 
     for route, page in pages.items():
         destination = output if route == "" else output / route
@@ -113,6 +147,22 @@ def main():
             page_html(page, nav, base, args.canonical_origin, canonical_base, route),
             encoding="utf-8",
         )
+
+    canonical_urls = [
+        args.canonical_origin.rstrip("/") + canonical_base + route
+        for route in pages
+    ]
+    sitemap = ['<?xml version="1.0" encoding="UTF-8"?>', '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">']
+    for url in canonical_urls:
+        sitemap.append(f"  <url><loc>{xml_escape(url)}</loc></url>")
+    sitemap.append("</urlset>")
+    (output / "sitemap.xml").write_text("\n".join(sitemap) + "\n", encoding="utf-8")
+
+    if base == canonical_base:
+        robots = f"User-agent: *\nAllow: /\nSitemap: {args.canonical_origin.rstrip('/')}{canonical_base}sitemap.xml\n"
+    else:
+        robots = "User-agent: *\nDisallow: /\n"
+    (output / "robots.txt").write_text(robots, encoding="utf-8")
 
     (output / "404.html").write_text(
         page_html(

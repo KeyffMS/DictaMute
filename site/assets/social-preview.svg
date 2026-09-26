@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">DictaMute social preview</title>
+  <desc id="desc">DictaMute logo and the text Automatic audio ducking, mute and pause for Windows.</desc>
+  <rect width="1200" height="630" fill="#14171F"/>
+  <rect x="48" y="48" width="1104" height="534" rx="36" fill="#181C26" stroke="#363F51" stroke-width="2"/>
+  <g transform="translate(92 136) scale(4.8)">
+    <rect x="4.75" y="4.75" width="54.5" height="54.5" rx="13.25" fill="#1D222D" stroke="#363F51" stroke-width="1.5"/>
+    <rect x="25" y="14" width="14" height="24" rx="7" fill="#708BFF"/>
+    <rect x="29" y="36" width="6" height="9" rx="3" fill="#708BFF"/>
+    <path d="M21 30C21 36.075 25.925 41 32 41C38.075 41 43 36.075 43 30" stroke="#4DD3A9" stroke-width="3" stroke-linecap="round"/>
+    <path d="M24 48H40" stroke="#BEC8D8" stroke-width="3" stroke-linecap="round"/>
+    <path d="M45.5 18.5L18.5 45.5" stroke="#FF6F80" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <text x="440" y="250" fill="#EFF3FA" font-family="Segoe UI, Arial, sans-serif" font-size="72" font-weight="700">DictaMute</text>
+  <text x="440" y="326" fill="#BEC8D8" font-family="Segoe UI, Arial, sans-serif" font-size="32">Automatic audio ducking, mute and pause</text>
+  <text x="440" y="372" fill="#BEC8D8" font-family="Segoe UI, Arial, sans-serif" font-size="32">for Windows.</text>
+  <text x="440" y="454" fill="#4DD3A9" font-family="Segoe UI, Arial, sans-serif" font-size="24">Free · open source · KeyffMS / aiteracja.pl</text>
+</svg>
