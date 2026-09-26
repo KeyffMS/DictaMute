@@ -1,0 +1,139 @@
+name: Prepare or publish DictaMute release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: Verify release metadata
+        shell: pwsh
+        run: ./tools/verify-release-metadata.ps1
+
+      - name: Read release request
+        id: release
+        shell: pwsh
+        run: |
+          $r = Get-Content release/release-request.json -Raw | ConvertFrom-Json
+          "version=$($r.version)" >> $env:GITHUB_OUTPUT
+          "tag=$($r.tag)" >> $env:GITHUB_OUTPUT
+          "channel=$($r.channel)" >> $env:GITHUB_OUTPUT
+          "publish=$($r.publish.ToString().ToLowerInvariant())" >> $env:GITHUB_OUTPUT
+          "notes=$($r.notesFile)" >> $env:GITHUB_OUTPUT
+
+      - name: Restore
+        run: dotnet restore DictaMute.sln
+
+      - name: Build
+        run: dotnet build DictaMute.sln --configuration Release --no-restore
+
+      - name: Run deterministic core tests
+        run: dotnet run --project tests/DictaMute.Tests --configuration Release --no-build
+
+      - name: Run WPF UI and public-contract tests
+        run: dotnet run --project tests/DictaMute.UiTests --configuration Release -- .
+
+      - name: Publish Windows x64 package
+        shell: pwsh
+        run: |
+          $tag = '${{ steps.release.outputs.tag }}'
+          $staging = "artifacts/release/DictaMute-$tag-win-x64"
+          dotnet publish src/DictaMute/DictaMute.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=false --output $staging
+
+          $required = @('DictaMute.exe', 'LICENSE', 'PRIVACY.md', 'SECURITY.md', 'THIRD-PARTY-NOTICES.md')
+          foreach ($name in $required) {
+            $path = Join-Path $staging $name
+            if (-not (Test-Path $path)) { throw "Missing required release file: $name" }
+          }
+
+      - name: Create release archive and integrity files
+        shell: pwsh
+        run: |
+          $tag = '${{ steps.release.outputs.tag }}'
+          $version = '${{ steps.release.outputs.version }}'
+          $releaseDir = 'artifacts/release'
+          $staging = Join-Path $releaseDir "DictaMute-$tag-win-x64"
+          $zip = Join-Path $releaseDir "DictaMute-$tag-win-x64.zip"
+
+          if (Test-Path $zip) { Remove-Item $zip -Force }
+          Compress-Archive -Path "$staging\*" -DestinationPath $zip -CompressionLevel Optimal
+
+          $hash = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          "$hash  $(Split-Path $zip -Leaf)" | Set-Content (Join-Path $releaseDir 'SHA256SUMS.txt') -Encoding ascii
+
+          dotnet list src/DictaMute/DictaMute.csproj package --include-transitive --format json |
+            Set-Content (Join-Path $releaseDir "DictaMute-$tag-dependencies.json") -Encoding utf8
+
+          $manifest = [ordered]@{
+            product = 'DictaMute'
+            version = $version
+            tag = $tag
+            channel = '${{ steps.release.outputs.channel }}'
+            sourceCommit = '${{ github.sha }}'
+            repository = '${{ github.repository }}'
+            runtime = 'win-x64'
+            selfContained = $true
+            officialArchive = (Split-Path $zip -Leaf)
+            sha256 = $hash
+            builtAtUtc = [DateTimeOffset]::UtcNow.ToString('O')
+          }
+          $manifest | ConvertTo-Json | Set-Content (Join-Path $releaseDir "DictaMute-$tag-release-manifest.json") -Encoding utf8
+
+      - name: Upload release candidate
+        uses: actions/upload-artifact@v4
+        with:
+          name: DictaMute-${{ steps.release.outputs.tag }}-candidate
+          path: |
+            artifacts/release/DictaMute-${{ steps.release.outputs.tag }}-win-x64.zip
+            artifacts/release/SHA256SUMS.txt
+            artifacts/release/DictaMute-${{ steps.release.outputs.tag }}-dependencies.json
+            artifacts/release/DictaMute-${{ steps.release.outputs.tag }}-release-manifest.json
+          if-no-files-found: error
+
+      - name: Ensure tag/release do not already exist
+        if: steps.release.outputs.publish == 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = '${{ steps.release.outputs.tag }}'
+          git ls-remote --exit-code --tags origin "refs/tags/$tag" 2>$null
+          if ($LASTEXITCODE -eq 0) { throw "Tag $tag already exists. Published tags are never reused." }
+          gh release view $tag --repo '${{ github.repository }}' 2>$null
+          if ($LASTEXITCODE -eq 0) { throw "Release $tag already exists." }
+          $global:LASTEXITCODE = 0
+
+      - name: Publish GitHub Release
+        if: steps.release.outputs.publish == 'true'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = '${{ steps.release.outputs.tag }}'
+          $notes = '${{ steps.release.outputs.notes }}'
+          $args = @(
+            'release', 'create', $tag,
+            'artifacts/release/DictaMute-' + $tag + '-win-x64.zip',
+            'artifacts/release/SHA256SUMS.txt',
+            'artifacts/release/DictaMute-' + $tag + '-dependencies.json',
+            'artifacts/release/DictaMute-' + $tag + '-release-manifest.json',
+            '--repo', '${{ github.repository }}',
+            '--target', '${{ github.sha }}',
+            '--title', "DictaMute $tag",
+            '--notes-file', $notes
+          )
+          if ('${{ steps.release.outputs.channel }}' -ne 'stable') { $args += '--prerelease' }
+          gh @args

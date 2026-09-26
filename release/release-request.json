@@ -1,0 +1,9 @@
+{
+  "version": "0.0.107",
+  "tag": "v0.0.107-alpha",
+  "channel": "alpha",
+  "publish": false,
+  "manualWindowsSmokeAccepted": false,
+  "releaseImmutabilityConfirmed": false,
+  "notesFile": "release/notes/v0.0.107-alpha.md"
+}
