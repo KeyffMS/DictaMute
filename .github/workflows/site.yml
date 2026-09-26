@@ -1,0 +1,42 @@
+name: Validate DictaMute website
+
+on:
+  push:
+    branches: [first-attempt]
+    paths:
+      - 'site/**'
+      - 'tools/build-site.py'
+      - 'tools/verify-site.py'
+      - 'docs/WEBSITE-CONTENT.md'
+      - '.github/workflows/site.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'site/**'
+      - 'tools/build-site.py'
+      - 'tools/verify-site.py'
+      - 'docs/WEBSITE-CONTENT.md'
+      - '.github/workflows/site.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build canonical /dictamute/ site
+        run: python tools/build-site.py --output artifacts/site-canonical --base-path /dictamute/ --canonical-base-path /dictamute/
+      - name: Verify canonical site
+        run: python tools/verify-site.py --root artifacts/site-canonical --base-path /dictamute/ --canonical-base-path /dictamute/
+      - name: Build GitHub Pages fallback path
+        run: python tools/build-site.py --output artifacts/site-pages --base-path /DictaMute/ --canonical-base-path /dictamute/
+      - name: Verify fallback build
+        run: python tools/verify-site.py --root artifacts/site-pages --base-path /DictaMute/ --canonical-base-path /dictamute/
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DictaMute-static-site
+          path: artifacts/site-canonical/
+          if-no-files-found: error
