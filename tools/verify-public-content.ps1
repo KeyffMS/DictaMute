@@ -11,22 +11,22 @@ foreach ($path in @($brandPath, $websitePath)) {
 $brand = Get-Content $brandPath -Raw
 $website = Get-Content $websitePath -Raw
 
-$canonical = 'https://aiteracja.pl/dictamute/'
+$canonical = 'https://aiteracja.pl/DictaMute/'
 if (-not $brand.Contains($canonical)) { throw 'Brand authority is missing canonical URL.' }
 if (-not $website.Contains($canonical)) { throw 'Website contract is missing canonical URL.' }
 
 $requiredRoutes = @(
-    '/dictamute/',
-    '/dictamute/features/',
-    '/dictamute/download/',
-    '/dictamute/docs/',
-    '/dictamute/how-it-works/',
-    '/dictamute/faq/',
-    '/dictamute/releases/',
-    '/dictamute/privacy/',
-    '/dictamute/legal/',
-    '/dictamute/security/',
-    '/dictamute/support/'
+    '/DictaMute/',
+    '/DictaMute/features/',
+    '/DictaMute/download/',
+    '/DictaMute/docs/',
+    '/DictaMute/how-it-works/',
+    '/DictaMute/faq/',
+    '/DictaMute/releases/',
+    '/DictaMute/privacy/',
+    '/DictaMute/legal/',
+    '/DictaMute/security/',
+    '/DictaMute/support/'
 )
 foreach ($route in $requiredRoutes) {
     if (-not $website.Contains($route)) { throw "Website contract is missing route: $route" }
