@@ -49,6 +49,18 @@ internal static class Program
                 "Brand contract keeps canonical identity");
             Check(!readme.Contains("wykryje aktywność głosową", StringComparison.OrdinalIgnoreCase),
                 "README avoids speech-detection claim");
+
+            var privacy = File.ReadAllText(Path.Combine(repository, "PRIVACY.md"));
+            var projectFile = File.ReadAllText(Path.Combine(repository, "src", "DictaMute", "DictaMute.csproj"));
+            var sourceText = string.Join("\n", Directory.GetFiles(Path.Combine(repository, "src"), "*.cs", SearchOption.AllDirectories)
+                .Select(File.ReadAllText));
+            Check(privacy.Contains("%LOCALAPPDATA%\\DictaMute\\settings.json", StringComparison.Ordinal) &&
+                  privacy.Contains("AudioMeterInformation.MasterPeakValue", StringComparison.Ordinal) &&
+                  projectFile.Contains("PRIVACY.md", StringComparison.Ordinal),
+                "Privacy notice is packaged and documents local data");
+            Check(!new[] { "WasapiCapture", "WaveInEvent", "WaveFileWriter", "HttpClient", "WebClient", "System.Net.Sockets" }
+                    .Any(sourceText.Contains),
+                "Privacy contract excludes raw capture and networking");
             var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
             Console.WriteLine("Theme assembly: " + typeof(DictaMute.App).Assembly.GetName().Name);
             // Load the complete application dictionary, including application-level overrides.

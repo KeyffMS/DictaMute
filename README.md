@@ -323,6 +323,16 @@ DictaMute może być przydatny podczas:
 
 ---
 
+## Prywatność
+
+Aktualna implementacja odczytuje aktywność sesji audio oraz wartość miernika poziomu sygnału. Nie tworzy strumienia nagrywającego mikrofon i nie zapisuje próbek audio. Aplikacja nie zawiera telemetrii, analityki, uploadu logów ani automatycznego sprawdzania aktualizacji przez sieć.
+
+Konfiguracja i log diagnostyczny są przechowywane lokalnie w `%LOCALAPPDATA%\DictaMute\`.
+
+Szczegóły, zakres danych oraz zasady bezpiecznego zgłaszania błędów: [PRIVACY.md](PRIVACY.md).
+
+---
+
 ## Licencja
 
 Projekt jest udostępniany na licencji **MIT**.
