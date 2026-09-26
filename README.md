@@ -1,8 +1,16 @@
 # DictaMute
 
-**DictaMute** to aplikacja dla Windows 10/11, która automatycznie wycisza, ścisza lub pauzuje wskazane aplikacje, gdy wykryje aktywność głosową w wybranych aplikacjach korzystających z mikrofonu.
+**DictaMute** to darmowe, open-source'owe narzędzie dla Windows 10/11, które automatycznie ścisza, wycisza lub pauzuje wybrane aplikacje, gdy aktywność skonfigurowanej sesji mikrofonu przekroczy ustawiony próg sygnału.
 
-Projekt powstał z myślą o dyktowaniu tekstu, rozmowach VoIP, spotkaniach online oraz innych sytuacjach, w których odtwarzana muzyka lub dźwięk przeszkadzają podczas korzystania z mikrofonu.
+Projekt powstał z myślą o dyktowaniu tekstu, rozmowach VoIP, spotkaniach online, nagrywaniu i innych sytuacjach, w których odtwarzany dźwięk przeszkadza podczas korzystania z mikrofonu.
+
+> DictaMute nie rozpoznaje mowy ani nie klasyfikuje dźwięku jako ludzkiego głosu. Reguła opiera się na aktywności sesji mikrofonowej oraz poziomie sygnału.
+
+**Publisher:** KeyffMS / aiteracja.pl  
+**Repository:** https://github.com/KeyffMS/DictaMute  
+**Canonical product URL:** https://aiteracja.pl/dictamute/ *(planowany publiczny adres produktu; uruchomienie strony jest śledzone w issues)*
+
+Aktualnie projekt jest rozwijany przed pierwszym publicznym wydaniem przez GitHub Releases.
 
 ---
 
@@ -20,16 +28,16 @@ Konfiguracja opiera się na dwóch grupach aplikacji:
 Schemat działania:
 
 ```text
-Aplikacja z grupy X wykrywa głos
+Aktywna sesja mikrofonu z grupy X
               ↓
-Przekroczony zostaje próg głośności
+Poziom sygnału przekracza próg
               ↓
 DictaMute reaguje
               ↓
 Aplikacje z grupy Y zostają
 ściszone / wyciszone / spauzowane
               ↓
-Użytkownik przestaje mówić
+Poziom sygnału spada poniżej progu
               ↓
 Mija skonfigurowany Hold Time
               ↓
@@ -94,7 +102,7 @@ Ctrl + Alt + Y  → dodaj aplikację do Celów
 
 ---
 
-## Detekcja głosu
+## Detekcja aktywności mikrofonu
 
 ### Noise Gate / Threshold
 
@@ -106,7 +114,7 @@ Przykład:
 Threshold: 3%
 ```
 
-Dzięki temu przypadkowe szumy, delikatne dźwięki otoczenia lub stukanie w klawiaturę nie muszą powodować wyciszenia muzyki.
+Próg pozwala ograniczyć reakcje na bardzo cichy sygnał, ale nie jest klasyfikatorem mowy: szum, klawiatura lub inne dźwięki przechwytywane przez mikrofon również mogą przekroczyć próg.
 
 ### Hold Time / Release Delay
 
@@ -160,7 +168,7 @@ Tryb ten może być używany m.in. z:
 
 ## Interfejs
 
-Planowany interfejs wykorzystuje ciemny motyw dopasowany do Windows 10/11.
+Interfejs wykorzystuje ciemny motyw współdzielący język wizualny z innymi aplikacjami KeyffMS / aiteracja.pl.
 
 ### Sekcja Źródeł
 
@@ -194,7 +202,7 @@ DictaMute może pracować bez otwartego głównego okna.
 
 Po zminimalizowaniu aplikacja pozostaje dostępna w zasobniku systemowym Windows.
 
-Menu kontekstowe może zawierać:
+Menu kontekstowe zawiera:
 
 - **Enable / Disable** — szybkie włączenie lub wyłączenie automatyki,
 - wybór profilu,
@@ -247,7 +255,7 @@ Win + H
 |---|---|
 | System operacyjny | Windows 10 / Windows 11 |
 | Język | C# |
-| Platforma | .NET 8 / .NET Framework 4.8 |
+| Platforma | .NET 8 (WPF) |
 | Audio | Windows Audio Session API / WASAPI |
 | Zarządzanie sesjami | AudioSessionManager |
 | Pomiar poziomu audio | AudioMeterInformation |
@@ -270,16 +278,9 @@ Projekt zakłada wykorzystanie mechanizmów Windows Audio Session API do:
 
 ---
 
-## Założenia wydajnościowe
+## Wydajność
 
-DictaMute ma działać stale w tle przy możliwie niewielkim wykorzystaniu zasobów.
-
-Zakładany cel:
-
-```text
-RAM: < 30 MB
-CPU idle: < 0.5%
-```
+DictaMute jest projektowany do stałej pracy w tle przy niewielkim narzucie. Publiczne limity RAM/CPU nie są obecnie deklarowane jako gwarantowane, dopóki nie zostaną zmierzone na zdefiniowanym środowisku testowym.
 
 ---
 
@@ -292,7 +293,7 @@ Win + H
         ↓
 Rozpoczyna się dyktowanie
         ↓
-Mikrofon przekracza Threshold
+Poziom sygnału mikrofonu przekracza Threshold
         ↓
 DictaMute wycisza Tidal
         ↓
