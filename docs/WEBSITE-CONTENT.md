@@ -295,7 +295,7 @@ Derive or verify against GitHub Releases:
 ## Checksum verification
 
 ```powershell
-Get-FileHash .\DictaMute-v0.0.107-alpha-win-x64.zip -Algorithm SHA256
+Get-FileHash .\DictaMute-v0.0.108-alpha-win-x64.zip -Algorithm SHA256
 ```
 
 Compare with `SHA256SUMS.txt` on the same GitHub Release.

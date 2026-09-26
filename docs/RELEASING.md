@@ -19,7 +19,7 @@ Public GitHub Release tags use:
 
 The first planned public release is:
 
-`v0.0.107-alpha`
+`v0.0.108-alpha`
 
 This does **not** mean it is published yet. Publication remains blocked until the release request is explicitly armed and all gates pass.
 

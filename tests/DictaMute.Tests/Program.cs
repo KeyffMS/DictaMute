@@ -12,6 +12,18 @@ var tests = new (string Name, Action Run)[]
     ("Hold includes short speech gaps", () => { var g = new NoiseGate(); Gate(g, true, 1, 0); Check(Gate(g, true, 0, 1499)); }),
     ("Hold ends at the configured boundary", () => { var g = new NoiseGate(); Gate(g, true, 1, 0); Check(!Gate(g, true, 0, 1500)); }),
     ("New speech restarts hold", () => { var g = new NoiseGate(); Gate(g, true, 1, 0); Gate(g, true, 1, 1000); Check(Gate(g, true, 0, 2000)); }),
+    ("Soft speech above release threshold retriggers an open gate", () => {
+        var g = new NoiseGate();
+        Check(Gate(g, true, .04f, 0));
+        Check(Gate(g, true, .02f, 1000)); // below 3% opening threshold, above 1.8% release threshold
+        Check(Gate(g, true, 0, 2000));    // hold runs from the softer retrigger at 1000 ms
+    }),
+    ("Signal below release threshold does not retrigger", () => {
+        var g = new NoiseGate();
+        Check(Gate(g, true, .04f, 0));
+        Check(Gate(g, true, .01f, 1000)); // below 60% hysteresis threshold
+        Check(!Gate(g, true, 0, 1500));
+    }),
     ("Disable releases without hold", () => { var g = new NoiseGate(); Gate(g, true, 1, 0); Check(!g.Update(false, true, 1, .03f, TimeSpan.FromSeconds(2), TimeSpan.Zero)); }),
     ("Reset forgets the previous trigger", () => { var g = new NoiseGate(); Gate(g, true, 1, 0); g.Reset(); Check(!Gate(g, true, 0, 1)); }),
     ("Zero hold still triggers on signal", () => { var g = new NoiseGate(); Check(g.Update(true, true, 1, .03f, TimeSpan.Zero, TimeSpan.Zero)); Check(!g.Update(true, true, 0, .03f, TimeSpan.Zero, TimeSpan.Zero)); }),

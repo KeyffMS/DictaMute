@@ -36,7 +36,8 @@ internal sealed class AutomationEngine
         var gate = new NoiseGate();
         var clock = Stopwatch.StartNew();
         var previousTime = clock.Elapsed;
-        var nextRefresh = TimeSpan.Zero;
+        var nextAudioRefresh = TimeSpan.Zero;
+        var nextMediaRefresh = TimeSpan.Zero;
         var nextSnapshot = TimeSpan.Zero;
         var mediaIds = Array.Empty<string>();
         EngineConfiguration? applied = null;
@@ -70,11 +71,18 @@ internal sealed class AutomationEngine
                     applied = configuration;
                 }
                 var profile = configuration.Profile;
-                if (now >= nextRefresh)
+                if (now >= nextAudioRefresh)
                 {
                     audio.Refresh();
+                    // Session churn while the gate is open must be discovered quickly:
+                    // a replacement playback session otherwise has up to 500 ms to play
+                    // at full volume before DictaMute acquires it.
+                    nextAudioRefresh = clock.Elapsed + TimeSpan.FromMilliseconds(wasOpen ? 150 : 500);
+                }
+                if (now >= nextMediaRefresh)
+                {
                     mediaIds = await media.GetSessionIdsAsync().ConfigureAwait(false);
-                    nextRefresh = clock.Elapsed + TimeSpan.FromMilliseconds(500);
+                    nextMediaRefresh = clock.Elapsed + TimeSpan.FromMilliseconds(500);
                 }
                 var capture = audio.ReadCapture();
                 var sources = capture.Where(c => c.Active &&
@@ -90,6 +98,14 @@ internal sealed class AutomationEngine
                 var peak = sources.Length == 0 ? 0 : sources.Max(c => c.Peak);
                 var open = gate.Update(configuration.Enabled, sources.Length > 0, peak, profile.Threshold,
                     TimeSpan.FromMilliseconds(profile.HoldMilliseconds), clock.Elapsed);
+                if (open != wasOpen)
+                {
+                    Log.Write($"Bramka {(open ? "OPEN" : "CLOSE")}: sources={sources.Length}, " +
+                        $"peak={peak:P1}, openThreshold={profile.Threshold:P1}, " +
+                        $"releaseThreshold={profile.Threshold * NoiseGate.ReleaseThresholdRatio:P1}, " +
+                        $"hold={profile.HoldMilliseconds} ms.");
+                    if (open) nextAudioRefresh = TimeSpan.Zero;
+                }
                 var fade = TimeSpan.FromMilliseconds(profile.FadeMilliseconds);
 
                 if (open)

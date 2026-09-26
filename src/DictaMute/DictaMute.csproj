@@ -9,7 +9,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AssemblyName>DictaMute</AssemblyName>
-    <Version>0.0.107</Version>
+    <Version>0.0.108</Version>
     <Description>Automatic per-application audio ducking for Windows.</Description>
   </PropertyGroup>
   <ItemGroup>

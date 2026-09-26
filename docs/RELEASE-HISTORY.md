@@ -4,11 +4,21 @@ GitHub Releases are the authoritative public release history.
 
 ## Planned
 
-### v0.0.107-alpha
+### v0.0.108-alpha
 
 Status: **not published**
 
-This is the selected first public alpha candidate.
+This is the selected first public alpha candidate. It supersedes the unpublished 0.0.107 alpha plan after the microphone-gate anti-chatter fix in issue #21.
+
+### v0.0.107-alpha
+
+Status: **superseded before publication**
+
+No GitHub Release or official binary was published under this tag. The candidate plan was replaced by v0.0.108-alpha before publication.
+
+### v0.0.108-alpha — release gates
+
+
 
 The release remains blocked until:
 

@@ -90,10 +90,10 @@ PAGES = {
         "description": "Download the official DictaMute Windows x64 release from GitHub Releases, verify its SHA-256 checksum and review system requirements and known limitations.",
         "h1": "Download the current DictaMute release.",
         "body": """
-<section class="notice"><h2>No official binary release has been published yet.</h2><p>The first public alpha is planned as <code>v0.0.107-alpha</code>. Until issue #7 is completed, temporary GitHub Actions artifacts are not official downloads.</p><p><a class="button" href="https://github.com/KeyffMS/DictaMute">Follow the repository</a></p></section>
+<section class="notice"><h2>No official binary release has been published yet.</h2><p>The first public alpha is planned as <code>v0.0.108-alpha</code>. Until issue #7 is completed, temporary GitHub Actions artifacts are not official downloads.</p><p><a class="button" href="https://github.com/KeyffMS/DictaMute">Follow the repository</a></p></section>
 <section><h2>System requirements</h2><ul><li>Windows 10 build 17763 or later, or Windows 11.</li><li>x64 for the initial official binary package.</li></ul></section>
 <section><h2>Install</h2><ol><li>Download the official ZIP from the GitHub Release linked here.</li><li>Optionally verify SHA-256.</li><li>Extract the complete ZIP.</li><li>Start <code>DictaMute.exe</code>.</li><li>Configure X, Y and threshold, then Save and apply.</li></ol></section>
-<section><h2>Verify SHA-256</h2><pre><code>Get-FileHash .\DictaMute-v0.0.107-alpha-win-x64.zip -Algorithm SHA256</code></pre><p>Compare the result with <code>SHA256SUMS.txt</code> from the same release.</p></section>
+<section><h2>Verify SHA-256</h2><pre><code>Get-FileHash .\DictaMute-v0.0.108-alpha-win-x64.zip -Algorithm SHA256</code></pre><p>Compare the result with <code>SHA256SUMS.txt</code> from the same release.</p></section>
 <section><h2>Windows reputation</h2><p>New or unsigned open-source binaries can trigger Microsoft Defender SmartScreen or another reputation warning. Download only from project-controlled links and verify the release, tag and checksum. Do not disable system protection globally.</p></section>
 <section><h2>Remove DictaMute</h2><p>Exit DictaMute, delete its application directory and optionally delete <code>%LOCALAPPDATA%\DictaMute\</code> to remove saved profiles and logs.</p></section>
 """
@@ -149,7 +149,7 @@ PAGES = {
         "description": "Public DictaMute release history with versions, dates, official Windows downloads, checksums, source tags and release status.",
         "h1": "Public, verifiable DictaMute releases.",
         "body": """
-<section class="notice"><h2>Planned: v0.0.107-alpha</h2><p>Status: not published. The first alpha remains behind the manual smoke-test and release-integrity gates in issue #7.</p></section>
+<section class="notice"><h2>Planned: v0.0.108-alpha</h2><p>Status: not published. The first alpha remains behind the manual smoke-test and release-integrity gates in issue #7.</p></section>
 <section><h2>Release authority</h2><p>GitHub Releases are the authoritative source for public DictaMute binaries. Temporary Actions artifacts are never official downloads.</p><p><a class="button" href="https://github.com/KeyffMS/DictaMute/releases">View GitHub Releases</a></p></section>
 """
     },

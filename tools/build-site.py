@@ -47,7 +47,7 @@ def page_html(page, nav, base_path, canonical_origin, canonical_base, route):
         "name": "DictaMute",
         "applicationCategory": "UtilitiesApplication",
         "operatingSystem": "Windows 10, Windows 11",
-        "softwareVersion": "0.0.107",
+        "softwareVersion": "0.0.108",
         "isAccessibleForFree": True,
         "license": "https://github.com/KeyffMS/DictaMute/blob/first-attempt/LICENSE",
         "codeRepository": "https://github.com/KeyffMS/DictaMute",
