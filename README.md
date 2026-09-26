@@ -8,7 +8,7 @@ Projekt powstał z myślą o dyktowaniu tekstu, rozmowach VoIP, spotkaniach onli
 
 **Publisher:** KeyffMS / aiteracja.pl  
 **Repository:** https://github.com/KeyffMS/DictaMute  
-**Canonical product URL:** https://aiteracja.pl/dictamute/ *(planowany publiczny adres produktu; uruchomienie strony jest śledzone w issues)*
+**Canonical product URL:** https://aiteracja.pl/DictaMute/ *(kanoniczny publiczny adres produktu)*
 
 Aktualnie projekt jest rozwijany przed pierwszym publicznym wydaniem przez GitHub Releases.
 

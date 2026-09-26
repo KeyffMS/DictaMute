@@ -1,6 +1,6 @@
 # DictaMute SEO and indexing policy
 
-Canonical origin: `https://aiteracja.pl/dictamute/`
+Canonical origin: `https://aiteracja.pl/DictaMute/`
 
 ## URL policy
 

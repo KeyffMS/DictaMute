@@ -120,8 +120,8 @@ def page_html(page, nav, base_path, canonical_origin, canonical_base, route):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--output", default="site/_build/canonical")
-    parser.add_argument("--base-path", default="/dictamute/")
-    parser.add_argument("--canonical-base-path", default="/dictamute/")
+    parser.add_argument("--base-path", default="/DictaMute/")
+    parser.add_argument("--canonical-base-path", default="/DictaMute/")
     parser.add_argument("--canonical-origin", default="https://aiteracja.pl")
     args = parser.parse_args()
 

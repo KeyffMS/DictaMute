@@ -7,7 +7,7 @@ This document is the canonical public identity contract for DictaMute. README, a
 - **Product name:** `DictaMute`
 - **Publisher:** `KeyffMS / aiteracja.pl`
 - **Repository:** `https://github.com/KeyffMS/DictaMute`
-- **Canonical product URL:** `https://aiteracja.pl/dictamute/`
+- **Canonical product URL:** `https://aiteracja.pl/DictaMute/`
 - **Optional convenience redirect:** `https://dictamute.aiteracja.pl/`
 - **License:** MIT
 - **Primary brand asset:** `assets/brand/dictamute-mark.svg`
@@ -103,11 +103,11 @@ The products remain separate identities. Do not reuse the SightAdapt name or eye
 
 The canonical public product root is:
 
-`https://aiteracja.pl/dictamute/`
+`https://aiteracja.pl/DictaMute/`
 
 The optional `https://dictamute.aiteracja.pl/` address should redirect permanently to the canonical path if it is enabled.
 
-Before the canonical site is live, repository and release copy may mention it as the planned canonical product URL but should not present a dead link as the primary user action.
+The canonical production site is maintained in `KeyffMS/DictaMute-website` and served directly by Aiteracja infrastructure.
 
 GitHub Releases are planned as the authoritative binary source. Website and directory listings should link to or verify against those releases rather than maintain divergent binaries.
 

@@ -202,6 +202,6 @@ Repository:
 
 Canonical product URL:
 
-`https://aiteracja.pl/dictamute/`
+`https://aiteracja.pl/DictaMute/`
 
 Use the public issue tracker only for non-sensitive, redacted reports. Security/private reporting instructions are maintained separately in `SECURITY.md`.

@@ -16,29 +16,29 @@ Website implementation must not redefine those authorities locally.
 
 Canonical public root:
 
-`https://aiteracja.pl/dictamute/`
+`https://aiteracja.pl/DictaMute/`
 
 Required routes:
 
 | Page | Canonical path | Primary purpose |
 |---|---|---|
-| Home | `/dictamute/` | Explain the problem, product and primary actions |
-| Features | `/dictamute/features/` | Explain X/Y rules, actions, profiles and controls |
-| Download | `/dictamute/download/` | Verified release download and integrity guidance |
-| Documentation | `/dictamute/docs/` | Getting started and configuration hub |
-| How it works | `/dictamute/how-it-works/` | Explain Windows audio/session behavior without overselling |
-| FAQ | `/dictamute/faq/` | Answer common product, privacy and compatibility questions |
-| Releases | `/dictamute/releases/` | Public release history derived from GitHub Releases |
-| Privacy | `/dictamute/privacy/` | Public rendering of the approved privacy authority |
-| Legal | `/dictamute/legal/` | MIT, notices and third-party/no-affiliation statements |
-| Security | `/dictamute/security/` | Security boundaries and reporting |
-| Support | `/dictamute/support/` | Usage help, bugs, features and security routing |
+| Home | `/DictaMute/` | Explain the problem, product and primary actions |
+| Features | `/DictaMute/features/` | Explain X/Y rules, actions, profiles and controls |
+| Download | `/DictaMute/download/` | Verified release download and integrity guidance |
+| Documentation | `/DictaMute/docs/` | Getting started and configuration hub |
+| How it works | `/DictaMute/how-it-works/` | Explain Windows audio/session behavior without overselling |
+| FAQ | `/DictaMute/faq/` | Answer common product, privacy and compatibility questions |
+| Releases | `/DictaMute/releases/` | Public release history derived from GitHub Releases |
+| Privacy | `/DictaMute/privacy/` | Public rendering of the approved privacy authority |
+| Legal | `/DictaMute/legal/` | MIT, notices and third-party/no-affiliation statements |
+| Security | `/DictaMute/security/` | Security boundaries and reporting |
+| Support | `/DictaMute/support/` | Usage help, bugs, features and security routing |
 
 Optional convenience host:
 
 `https://dictamute.aiteracja.pl/`
 
-If enabled, it must permanently redirect to the matching canonical `aiteracja.pl/dictamute/` path and must not host a separately indexed copy.
+If enabled, it must permanently redirect to the matching canonical `aiteracja.pl/DictaMute/` path and must not host a separately indexed copy.
 
 ## 2. Global navigation and footer
 
@@ -94,7 +94,7 @@ Do not replace `microphone activity` / `signal threshold` with:
 
 The product reacts to session activity and an audio meter threshold. Keyboard noise, room noise or other captured sound can also cross that threshold.
 
-# 4. Home — `/dictamute/`
+# 4. Home — `/DictaMute/`
 
 ## Metadata
 
@@ -185,7 +185,7 @@ Visible bullets:
 - Pause requires a compatible uniquely matched media session and can fall back to Duck;
 - broad compatibility and performance testing remain limited during alpha development.
 
-# 5. Features — `/dictamute/features/`
+# 5. Features — `/DictaMute/features/`
 
 ## Metadata
 
@@ -247,7 +247,7 @@ Explain open configuration, global enable/disable, profile selection, exit and t
 - no universal application compatibility guarantee;
 - no current audio/settings/telemetry upload.
 
-# 6. Download — `/dictamute/download/`
+# 6. Download — `/DictaMute/download/`
 
 ## Metadata
 
@@ -308,7 +308,7 @@ Compare with `SHA256SUMS.txt` on the same GitHub Release.
 
 Exit DictaMute, remove the program directory, and optionally delete `%LOCALAPPDATA%\DictaMute\` to remove saved profiles/logs.
 
-# 7. Documentation — `/dictamute/docs/`
+# 7. Documentation — `/DictaMute/docs/`
 
 ## Metadata
 
@@ -340,7 +340,7 @@ Exit DictaMute, remove the program directory, and optionally delete `%LOCALAPPDA
 
 Troubleshooting must cover source/target not appearing, zero meter, Pause fallback, elevated targets, settings/log location, corrupted settings recovery and tray behavior.
 
-# 8. How it works — `/dictamute/how-it-works/`
+# 8. How it works — `/DictaMute/how-it-works/`
 
 ## Metadata
 
@@ -372,7 +372,7 @@ Required accessible diagram text:
 
 `Capture endpoint/session → active source X → meter threshold/gate → target Y resolver → Duck/Mute/Pause → restore`
 
-# 9. FAQ — `/dictamute/faq/`
+# 9. FAQ — `/DictaMute/faq/`
 
 ## Metadata
 
@@ -434,7 +434,7 @@ Yes, with the .NET 8 SDK on supported Windows.
 
 Use GitHub Issues for non-sensitive reports and follow `SECURITY.md` for sensitive security details.
 
-# 10. Releases — `/dictamute/releases/`
+# 10. Releases — `/DictaMute/releases/`
 
 ## Metadata
 
@@ -452,7 +452,7 @@ Show version/tag/date/channel/summary/platform, official ZIP, checksum, source t
 
 Before first publication show the planned alpha as not published without exposing temporary Actions artifacts.
 
-# 11. Privacy — `/dictamute/privacy/`
+# 11. Privacy — `/DictaMute/privacy/`
 
 ## Metadata
 
@@ -472,7 +472,7 @@ Required summary while current behavior remains true:
 
 Cover data read/stored, signal metering, executable paths, settings/log deletion, reporting redaction and support-data retention.
 
-# 12. Legal — `/dictamute/legal/`
+# 12. Legal — `/DictaMute/legal/`
 
 ## Metadata
 
@@ -499,7 +499,7 @@ Required text:
 
 > DictaMute does not attempt to circumvent DRM, protected-media restrictions, application access controls or Windows security boundaries.
 
-# 13. Security — `/dictamute/security/`
+# 13. Security — `/DictaMute/security/`
 
 ## Metadata
 
@@ -515,7 +515,7 @@ Authority: `SECURITY.md`.
 
 Cover current-user model, no driver/service/injection, no bypass, restoration limitations, elevated/protected application limitations, local-file boundary and vulnerability reporting.
 
-# 14. Support — `/dictamute/support/`
+# 14. Support — `/DictaMute/support/`
 
 ## Metadata
 
@@ -593,7 +593,7 @@ Every page requires:
 - unique title;
 - unique meta description;
 - one H1;
-- canonical URL under `https://aiteracja.pl/dictamute/`;
+- canonical URL under `https://aiteracja.pl/DictaMute/`;
 - descriptive internal links;
 - crawlable textual content.
 
