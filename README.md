@@ -333,6 +333,14 @@ Szczegóły, zakres danych oraz zasady bezpiecznego zgłaszania błędów: [PRIV
 
 ---
 
+## Bezpieczeństwo
+
+DictaMute działa jako zwykła aplikacja bieżącego użytkownika. Nie instaluje sterownika ani usługi, nie wstrzykuje kodu do innych procesów i nie obchodzi mechanizmów DRM lub uprawnień Windows.
+
+Granice bezpieczeństwa, zachowanie przy awariach i sposób zgłaszania podatności: [SECURITY.md](SECURITY.md).
+
+---
+
 ## Licencja
 
 Projekt jest udostępniany na licencji **MIT**.

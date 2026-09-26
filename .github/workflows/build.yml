@@ -36,6 +36,14 @@ jobs:
           if-no-files-found: warn
       - name: Publish portable Windows x64 application
         run: dotnet publish src/DictaMute/DictaMute.csproj --configuration Release --runtime win-x64 --self-contained true -p:PublishSingleFile=false --output artifacts/DictaMute-win-x64
+      - name: Verify packaged public documents
+        shell: pwsh
+        run: |
+          $required = @('LICENSE', 'PRIVACY.md', 'SECURITY.md', 'THIRD-PARTY-NOTICES.md')
+          foreach ($name in $required) {
+            $path = Join-Path 'artifacts/DictaMute-win-x64' $name
+            if (-not (Test-Path $path)) { throw "Missing required packaged document: $name" }
+          }
       - uses: actions/upload-artifact@v4
         with:
           name: DictaMute-win-x64

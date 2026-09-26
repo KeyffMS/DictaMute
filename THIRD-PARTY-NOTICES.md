@@ -30,3 +30,17 @@ SOFTWARE.
 
 Self-contained publish output also contains Microsoft runtime components and
 associated license/notice files. Retain those files when distributing the application.
+
+
+## Release packaging rule
+
+Official DictaMute distributions must retain this file and all dependency/runtime
+license or notice files required by the final published artifact.
+
+The release process must re-check the dependency inventory before publication.
+Adding or upgrading a dependency requires reviewing its license and updating this
+notice when necessary.
+
+Third-party application names mentioned in DictaMute documentation or examples
+are interoperability references only and do not imply affiliation, sponsorship,
+certification or endorsement.
