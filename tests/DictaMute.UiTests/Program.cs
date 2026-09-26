@@ -44,7 +44,7 @@ internal static class Program
             var brand = File.ReadAllText(Path.Combine(repository, "docs", "BRAND.md"));
             Check(readme.StartsWith("# DictaMute", StringComparison.Ordinal), "README starts with canonical product name");
             Check(brand.Contains("KeyffMS / aiteracja.pl", StringComparison.Ordinal) &&
-                  brand.Contains("https://aiteracja.pl/dictamute/", StringComparison.Ordinal) &&
+                  brand.Contains("https://aiteracja.pl/DictaMute/", StringComparison.Ordinal) &&
                   brand.Contains("DictaMute is a free, open-source Windows utility", StringComparison.Ordinal),
                 "Brand contract keeps canonical identity");
             Check(!readme.Contains("wykryje aktywność głosową", StringComparison.OrdinalIgnoreCase),
