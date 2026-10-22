@@ -104,14 +104,14 @@
                   </StackPanel>
                 </Grid>
                 <StackPanel Margin="14,3,14,4">
-                  <TextBlock Text="Aktywne aplikacje używające mikrofonu" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11.333" Margin="0,0,0,4" />
-                  <ComboBox x:Name="CaptureApps" Style="{StaticResource CompactComboBox}" DisplayMemberPath="Label" AutomationProperties.Name="Dostępne źródła mikrofonu" ToolTip="Uruchom rozmowę lub dyktowanie, aby zobaczyć proces używający mikrofonu." />
+                  <TextBlock Text="Wykryte aplikacje z sesją mikrofonu" Foreground="{StaticResource TextSecondaryBrush}" FontSize="11.333" Margin="0,0,0,4" />
+                  <ComboBox x:Name="CaptureApps" Style="{StaticResource CompactComboBox}" DisplayMemberPath="Label" AutomationProperties.Name="Dostępne źródła mikrofonu" ToolTip="Lista obejmuje wykryte sesje mikrofonowe także wtedy, gdy chwilowo nie są aktywne." />
                   <WrapPanel Margin="0,6,0,0">
                     <Button Content="Dodaj źródło" MinHeight="34" Padding="14,5" Click="AddCapture_Click" IsEnabled="{Binding ElementName=CaptureApps, Path=HasItems}" />
                     <Button Content="Wybierz .exe" Click="BrowseSource_Click" MinHeight="34" Padding="14,5" />
                     <Button Content="Usuń" Click="RemoveSource_Click" Style="{StaticResource DangerButton}" MinHeight="34" Padding="14,5" Margin="0" />
                   </WrapPanel>
-                  <TextBlock Text="Skrót dodaje proces aktywnego okna. Dla Win+H wybierz rzeczywisty proces mikrofonu z listy." Foreground="{StaticResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0" />
+                  <TextBlock Text="Ctrl+Alt+X dodaje rzeczywistą aktywną aplikację mikrofonu. Gdy kilka aplikacji używa mikrofonu, wybierz właściwą z listy." Foreground="{StaticResource TextMutedBrush}" FontSize="11" TextWrapping="Wrap" Margin="0,4,0,0" />
                 </StackPanel>
               </StackPanel>
             </Border>

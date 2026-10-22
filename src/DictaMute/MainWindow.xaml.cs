@@ -37,6 +37,7 @@ public partial class MainWindow : Window
     private readonly AutomationEngine _engine;
     private readonly ObservableCollection<AppRow> _sources = [];
     private readonly ObservableCollection<AppRow> _targets = [];
+    private AppIdentity[] _activeCaptureApps = [];
     private readonly Forms.NotifyIcon _tray;
     private readonly Forms.ToolStripMenuItem _trayToggle;
     private readonly Forms.ToolStripMenuItem _trayProfiles;
@@ -307,9 +308,28 @@ public partial class MainWindow : Window
     private void HandleHotkey(int id)
     {
         if (id == 3) { SetEnabled(!_settings.Enabled); return; }
-        var app = ProcessService.Foreground();
-        if (app is null) { _notice = "Nie można odczytać aplikacji aktywnego okna."; return; }
-        AddApp(app, id == 1);
+
+        var foreground = ProcessService.Foreground();
+        if (id == 1)
+        {
+            var selected = (CaptureApps.SelectedItem as AppChoice)?.App;
+            var result = SourceCandidateResolver.Resolve(_activeCaptureApps, selected, foreground);
+            if (result.Ambiguous)
+            {
+                _notice = "Kilka aplikacji używa mikrofonu. Wybierz właściwą z listy źródeł i naciśnij skrót ponownie.";
+                return;
+            }
+            if (result.App is null)
+            {
+                _notice = "Nie wykryto aktywnej aplikacji mikrofonu ani aplikacji aktywnego okna.";
+                return;
+            }
+            AddApp(result.App, source: true);
+            return;
+        }
+
+        if (foreground is null) { _notice = "Nie można odczytać aplikacji aktywnego okna."; return; }
+        AddApp(foreground, source: false);
     }
     private void AddCapture_Click(object sender, RoutedEventArgs e)
     { if (CaptureApps.SelectedItem is AppChoice choice) AddApp(choice.App, true); }
@@ -360,10 +380,29 @@ public partial class MainWindow : Window
                 row.Peak = active.Length == 0 ? 0 : active.Max(c => c.Peak) * 100;
                 row.Status = active.Length == 0 ? "Nieaktywna" : string.Join(", ", active.Select(c => c.Device).Distinct());
             }
-            UpdateChoices(CaptureApps, snapshot.Capture.Where(c => c.Active)
-                .Select(c => new AppChoice(c.App, c.App.Name + " — " + c.Device))
-                .DistinctBy(c => c.App.ExecutablePath ?? c.App.Name).ToArray());
-            UpdateChoices(PlaybackApps, snapshot.Playback.Select(a => new AppChoice(a, a.Name)).ToArray());
+            _activeCaptureApps = snapshot.Capture.Where(c => c.Active)
+                .Select(c => c.App)
+                .DistinctBy(a => a.ExecutablePath ?? a.Name, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            var captureChoices = snapshot.Capture
+                .GroupBy(c => c.App.ExecutablePath ?? c.App.Name, StringComparer.OrdinalIgnoreCase)
+                .Select(group =>
+                {
+                    var first = group.First();
+                    var devices = string.Join(", ", group.Select(c => c.Device).Distinct(StringComparer.OrdinalIgnoreCase));
+                    var state = group.Any(c => c.Active) ? "aktywna" : "nieaktywna";
+                    return new AppChoice(first.App, first.App.Name + " — " + devices + " · " + state);
+                })
+                .OrderByDescending(choice => _activeCaptureApps.Any(active => active.Matches(choice.App)))
+                .ThenBy(choice => choice.App.Name, StringComparer.OrdinalIgnoreCase)
+                .ToArray();
+
+            UpdateChoices(CaptureApps, captureChoices);
+            UpdateChoices(PlaybackApps, snapshot.Playback.Select(a => new AppChoice(a, a.Name))
+                .DistinctBy(c => c.App.ExecutablePath ?? c.App.Name, StringComparer.OrdinalIgnoreCase)
+                .OrderBy(c => c.App.Name, StringComparer.OrdinalIgnoreCase)
+                .ToArray());
             var oldIds = MediaSessions.ItemsSource as string[] ?? [];
             if (!oldIds.SequenceEqual(snapshot.MediaIds))
             {

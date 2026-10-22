@@ -27,6 +27,27 @@ var tests = new (string Name, Action Run)[]
     ("Disable releases without hold", () => { var g = new NoiseGate(); Gate(g, true, 1, 0); Check(!g.Update(false, true, 1, .03f, TimeSpan.FromSeconds(2), TimeSpan.Zero)); }),
     ("Reset forgets the previous trigger", () => { var g = new NoiseGate(); Gate(g, true, 1, 0); g.Reset(); Check(!Gate(g, true, 0, 1)); }),
     ("Zero hold still triggers on signal", () => { var g = new NoiseGate(); Check(g.Update(true, true, 1, .03f, TimeSpan.Zero, TimeSpan.Zero)); Check(!g.Update(true, true, 0, .03f, TimeSpan.Zero, TimeSpan.Zero)); }),
+    ("Source hotkey prefers the only active microphone app", () => {
+        var mic = new AppIdentity("TextInputHost");
+        var foreground = new AppIdentity("brave");
+        var result = SourceCandidateResolver.Resolve([mic], null, foreground);
+        Check(result.App?.Matches(mic) == true && result.FromActiveMicrophone && !result.Ambiguous);
+    }),
+    ("Source hotkey uses selected active mic app when several are active", () => {
+        var one = new AppIdentity("one");
+        var two = new AppIdentity("two");
+        var result = SourceCandidateResolver.Resolve([one, two], two, new("browser"));
+        Check(result.App?.Matches(two) == true && result.FromActiveMicrophone && !result.Ambiguous);
+    }),
+    ("Source hotkey refuses to guess between multiple mic apps", () => {
+        var result = SourceCandidateResolver.Resolve([new("one"), new("two")], null, new("browser"));
+        Check(result.App is null && result.Ambiguous);
+    }),
+    ("Source hotkey falls back to foreground without mic session", () => {
+        var foreground = new AppIdentity("browser");
+        var result = SourceCandidateResolver.Resolve([], null, foreground);
+        Check(result.App?.Matches(foreground) == true && !result.FromActiveMicrophone && !result.Ambiguous);
+    }),
     ("Names are case insensitive", () => Check(new AppIdentity("SPOTIFY.EXE").Matches(new("spotify")))),
     ("Different known paths do not match", () => Check(!new AppIdentity("app", @"C:\one\app.exe").Matches(new("app", @"C:\two\app.exe")))),
     ("Unknown path can match a name rule", () => Check(new AppIdentity("app").Matches(new("app", @"C:\two\app.exe")))),

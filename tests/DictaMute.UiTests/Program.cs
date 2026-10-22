@@ -151,6 +151,12 @@ internal static class Program
                 "Global options share one row");
             var captureApps = Find<ComboBox>(window, "CaptureApps");
             var playbackApps = Find<ComboBox>(window, "PlaybackApps");
+            var sourcePickerLabel = document.Descendants(presentation + "TextBlock")
+                .Select(element => (string?)element.Attribute("Text"))
+                .FirstOrDefault(text => text == "Wykryte aplikacje z sesją mikrofonu");
+            Check(sourcePickerLabel is not null, "Source picker keeps detected microphone sessions visible");
+            Check(document.ToString().Contains("Ctrl+Alt+X dodaje rzeczywistą aktywną aplikację mikrofonu", StringComparison.Ordinal),
+                "Source picker helper text explains active microphone behavior");
             Check(
                 ((SolidColorBrush)captureApps.Background).Color == (Color)app.FindResource("SurfaceRaisedColor") &&
                 ((SolidColorBrush)playbackApps.Background).Color == (Color)app.FindResource("SurfaceRaisedColor"),
